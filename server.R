@@ -1,4 +1,3 @@
-
 # This is the server logic for a Shiny web application.
 # You can find out more about building applications with Shiny here:
 #
@@ -47,7 +46,8 @@ shinyServer(function(input, output) {
                                                   gridlines = "{color: 'transparent'}",
                                                   chartArea = "{width:'100%',height:'100%'}",
                                                   width = "200px",
-                                                  height = "50px"))$html$chart,
+                                                  height = "80px",
+                                                  fontSize = 12))$html$chart,
                     collapse = "\n")
       
       

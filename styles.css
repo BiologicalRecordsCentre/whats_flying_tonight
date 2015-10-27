@@ -1,10 +1,14 @@
+body {
+  background-color: #663300;
+}
+
 #species {
   max-width: 400px;
-  margin: 6px auto;
+  margin: 8px auto;
   overflow: hidden;
   background-color:#eae9d4; /*frame colour*/
   /*add a drop shadow to the frame*/
-  box-shadow: 0 0 6px rgba(132, 132, 132, .75);
+  box-shadow: 0 0 9px #080808;
   /*and give the corners a small curve*/
   border-radius: 4px;
 }
