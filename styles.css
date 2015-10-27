@@ -1,0 +1,28 @@
+#species {
+  max-width: 400px;
+  margin: 6px auto;
+  overflow: hidden;
+  background-color:#eae9d4; /*frame colour*/
+  /*add a drop shadow to the frame*/
+  box-shadow: 0 0 6px rgba(132, 132, 132, .75);
+  /*and give the corners a small curve*/
+  border-radius: 4px;
+}
+
+#image {
+  float: left;
+  max-width: 50%;
+}
+
+#text{
+  position: relative;
+  left: 6px;
+  padding-top: 4px;
+}
+
+#chart{
+  left: 50%;
+  padding-left: 8px;
+  float: left;
+  padding-top: 20px;
+}
