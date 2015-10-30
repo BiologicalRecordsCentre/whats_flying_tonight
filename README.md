@@ -6,6 +6,9 @@ A web app to provide access to moths species flying at the users location
 In your R console:
 
 ```r
+install.packages(c('shiny', 'googleVis'))
 library(shiny)
 runGitHub('biologicalrecordscentre/whats_flying_tonight')
 ```
+
+![Preview](preview.png)
