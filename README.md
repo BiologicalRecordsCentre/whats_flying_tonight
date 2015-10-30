@@ -10,7 +10,7 @@ Under development
 In your R console:
 
 ```r
-install.packages(c('shiny', 'googleVis'))
+install.packages(c('shiny', 'ggplot2', 'RColorBrewer', 'grid'))
 library(shiny)
 runGitHub('biologicalrecordscentre/whats_flying_tonight')
 ```
