@@ -4,7 +4,7 @@ body {
 
 #species {
   max-width: 400px;
-  margin: 8px auto;
+  margin: 5px -8px 0px -8px;
   overflow: hidden;
   background-color:#eae9d4; /*frame colour*/
   /*add a drop shadow to the frame*/
@@ -14,13 +14,16 @@ body {
 }
 
 #image {
+  overflow: hidden;
   float: left;
-  max-width: 50%;
+  max-width: 37%;
 }
 
 #text{
-  position: relative;
-  left: 6px;
+  float: right;
+  padding-left: 2px;
+  padding-right: 2px;
+  max-width: 62%;
   padding-top: 4px;
 }
 
