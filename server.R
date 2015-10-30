@@ -68,7 +68,7 @@ shinyServer(function(input, output) {
       
       tempDat <- calData[[speciesData$commonName[i]]]
       
-      png(filename = outfile, width = 200, height = 100, bg = "transparent")
+      png(filename = outfile, width = 235, height = 80, bg = "transparent")
 
         p <- ggplot(tempDat, aes(x = Week, y = id, fill = value)) +
          geom_tile() +
@@ -78,7 +78,7 @@ shinyServer(function(input, output) {
          geom_vline(xintercept = c(thisWeek - 0.5, thisWeek + 0.5)) +
          ylab('') +
          theme_bw() +
-         theme(text = element_text(size = 16),
+         theme(text = element_text(size = 12),
                legend.position = "none",
                plot.background = element_rect(fill = "transparent", colour = NA),
                plot.margin = unit(c(0.1,0.1,0.1,-0.9), "cm"),
@@ -93,7 +93,8 @@ shinyServer(function(input, output) {
                                 a(href = speciesData[i,'image'],
                                   img(src = speciesData[i,'image'],
                                       tabindex = 1,
-                                      width = '100%',
+                                      align = 'middle',
+                                      height = '100%',
                                       alt = speciesData[i,'commonName']))
                        ),
                        
@@ -107,10 +108,11 @@ shinyServer(function(input, output) {
                                           style=paste("color",
                                                       speciesData[i, 'colour'],
                                                       sep = ':')),
+                                br(),
                                 img(src = basename(outfile),
                                     align = 'middle',
                                     tabindex = 1,
-                                    width = '48%',
+                                    width = '100%',
                                     alt = paste(speciesData[i,'commonName'],
                                                 'phenology'))
                        )
