@@ -1,6 +1,10 @@
 # What's flying tonight?
 A web app to provide access to moths species flying at the users location
 
+# Status
+
+Under development
+
 # How to run
 
 In your R console:
