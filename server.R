@@ -30,6 +30,9 @@ yearData <- data.frame(month = c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
 #   
 # }
 
+# What week are we in? 
+thisWeek <- 30
+
 calData <- list() 
 
 for(i in speciesData$commonName){
@@ -37,6 +40,7 @@ for(i in speciesData$commonName){
   num <- rnorm(n = 8000, mean = rnorm(1), sd = 0.2)
   h <- as.numeric(table(cut(num, breaks = 52, include.lowest = TRUE)))
   ly <- as.numeric(table(cut(sample(num, size = 6000, replace = TRUE), breaks = 52, include.lowest = TRUE)))
+  ty <- as.numeric(table(cut(sample(num, size = 6000, replace = TRUE), breaks = 52, include.lowest = TRUE)))
   
   historic <- data.frame(value = h/max(h),
                          id = 'Historic',
@@ -44,14 +48,16 @@ for(i in speciesData$commonName){
   lastYear <- data.frame(value = ly/max(ly),
                          id = 'Last year',
                          stringsAsFactors = FALSE)
-  calData[[i]] <- rbind(lastYear, historic)
-  calData[[i]]$Week <- rep(1:52, 2)
+  thisYear <- data.frame(value = ty/max(ty),
+                         id = 'This year',
+                         stringsAsFactors = FALSE)
+  thisYear$value[(thisWeek+1):52] <- 0
+  calData[[i]] <- rbind(thisYear, lastYear, historic)
+  calData[[i]]$Week <- rep(1:52, 3)
   
 }
 
-# What week are we in? 
-thisWeek <- 30
-         
+
 # Create a custom colour pallette for the calendar plots
 myPalette <- colorRampPalette(brewer.pal(9, 'YlOrBr'))
 
@@ -77,17 +83,20 @@ shinyServer(function(input, output) {
          scale_y_discrete(expand = c(0, 0)) +
          geom_vline(xintercept = c(thisWeek - 0.5, thisWeek + 0.5)) +
          ylab('') +
+         geom_hline(yintercept = c(1.5, 2.5), colour = 'white') +
          theme_bw() +
          theme(text = element_text(size = 12),
                legend.position = "none",
                plot.background = element_rect(fill = "transparent", colour = NA),
-               plot.margin = unit(c(0.1,0.1,0.1,-0.9), "cm"),
+               plot.margin = unit(c(0.1,0.1,0.1,-0.8), "cm"),
                axis.text.y = element_blank(),
                axis.ticks.y = element_blank()) 
         plot(p)
+        
       dev.off()
 
       temp_html <- tags$div(id = 'species',
+                            align = 'center',
                        
                        tags$div(id = 'image',
                                 a(href = speciesData[i,'image'],
