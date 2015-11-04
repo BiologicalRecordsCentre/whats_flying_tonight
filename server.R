@@ -9,6 +9,7 @@ library(shiny)
 library(ggplot2)
 library(RColorBrewer)
 library(grid)
+set.seed(1)
 
 locationData <- data.frame(nrec = round(runif(n = 6, 10, 1000)))
 locationData$colour <- ifelse(locationData$nrec > 500, 'green', 'red')
@@ -57,7 +58,6 @@ for(i in speciesData$commonName){
   
 }
 
-
 # Create a custom colour pallette for the calendar plots
 myPalette <- colorRampPalette(brewer.pal(9, 'YlOrBr'))
 
@@ -75,24 +75,42 @@ shinyServer(function(input, output) {
       tempDat <- calData[[speciesData$commonName[i]]]
       
       png(filename = outfile, width = 235, height = 80, bg = "transparent")
-
-        p <- ggplot(tempDat, aes(x = Week, y = id, fill = value)) +
-         geom_tile() +
-         scale_fill_gradientn(colours = myPalette(52)) +
-         scale_x_discrete(expand = c(0, -2), breaks = c(seq(10,50,10))) +
-         scale_y_discrete(expand = c(0, 0)) +
-         geom_vline(xintercept = c(thisWeek - 0.5, thisWeek + 0.5)) +
-         ylab('') +
-         geom_hline(yintercept = c(1.5, 2.5), colour = 'white') +
-         theme_bw() +
-         theme(text = element_text(size = 12),
-               legend.position = "none",
-               plot.background = element_rect(fill = "transparent", colour = NA),
-               plot.margin = unit(c(0.1,0.1,0.1,-0.8), "cm"),
-               axis.text.y = element_blank(),
-               axis.ticks.y = element_blank()) 
-        plot(p)
-        
+      
+      p <- ggplot(tempDat, aes(x = Week, y = id, fill = value)) +
+        geom_tile() +
+        scale_fill_gradientn(colours = myPalette(52)) +
+        scale_x_discrete(expand = c(0, -2), breaks = c(seq(10,50,10))) +
+        scale_y_discrete(expand = c(0, 0)) +
+        geom_vline(xintercept = c(thisWeek - 0.5, thisWeek + 0.5)) +
+        ylab('') +
+        geom_hline(yintercept = c(1.5, 2.5), colour = 'white') +
+        theme_bw() +
+        theme(text = element_text(size = 12),
+              legend.position = "none",
+              plot.background = element_rect(fill = "transparent", colour = NA),
+              plot.margin = unit(c(0.1,0.1,0.1,-0.8), "cm"),
+              axis.text.y = element_blank(),
+              axis.ticks.y = element_blank()) 
+      plot(p)
+      
+      dev.off()
+      
+      png(filename = gsub('.png', 'big.png', outfile), width = 600, height = 250, bg = "transparent")
+      
+      p <- ggplot(tempDat, aes(x = Week, y = id, fill = value)) +
+        geom_tile() +
+        scale_fill_gradientn(colours = myPalette(52)) +
+        scale_x_discrete(expand = c(0, -2), breaks = c(seq(10,50,10))) +
+        scale_y_discrete(expand = c(0, 0)) +
+        geom_vline(xintercept = c(thisWeek - 0.5, thisWeek + 0.5)) +
+        geom_hline(yintercept = c(1.5, 2.5), colour = 'white') +
+        theme_bw() +
+        ylab('') +
+        theme(text = element_text(size = 12),
+              legend.position = "none",
+              plot.background = element_rect(fill = "transparent", colour = NA)) 
+      plot(p)
+      
       dev.off()
 
       temp_html <- tags$div(id = 'species',
@@ -118,14 +136,17 @@ shinyServer(function(input, output) {
                                                       speciesData[i, 'colour'],
                                                       sep = ':')),
                                 br(),
-                                img(src = basename(outfile),
-                                    align = 'middle',
-                                    tabindex = 1,
-                                    width = '100%',
-                                    alt = paste(speciesData[i,'commonName'],
-                                                'phenology'))
+                                a(href = gsub('.png', 'big.png', basename(outfile)),
+                                  'data-lightbox' = gsub('.png', '', basename(outfile)),
+                                  'data-title' = paste(speciesData[i,'commonName'],
+                                                       'phenology'),
+                                  img(src = basename(outfile),
+                                      align = 'middle',
+                                      tabindex = 1,
+                                      width = '100%',
+                                      alt = paste(speciesData[i,'commonName'],
+                                                  'phenology')))
                        )
-                       
       )
         
       html <- append(html, list(temp_html))

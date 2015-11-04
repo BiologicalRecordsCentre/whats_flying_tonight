@@ -10,10 +10,17 @@ library(shiny)
 shinyUI(fluidPage(
   
   tags$head(
+    
     # Include our custom CSS
-    includeCSS("styles.css")
+    includeCSS("styles.css"),
+    includeCSS("lightbox.css"),
+    includeScript("jquery-2.1.4.js")
+    # includeScript("lightbox.js")
+
   ),
   
-  htmlOutput('UI')
+  htmlOutput('UI'),
+  
+  includeScript("lightbox.js")
   
 ))
