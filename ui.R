@@ -15,7 +15,6 @@ shinyUI(fluidPage(
     includeCSS("styles.css"),
     includeCSS("lightbox.css"),
     includeScript("jquery-2.1.4.js")
-    # includeScript("lightbox.js")
 
   ),
   
