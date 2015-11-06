@@ -3,7 +3,6 @@
 #
 # http://shiny.rstudio.com
 #
-
 library(shiny)
 
 # load datasets
@@ -28,13 +27,27 @@ shinyServer(function(input, output) {
       big_phenology <- paste('phenology/', gsub(' ', '_', speciesData[i, 'latinName']), 'big.png', sep = '')
       small_phenology <- paste('phenology/', gsub(' ', '_', speciesData[i, 'latinName']), '.png', sep = '')
       
+      # Create species gallery links
+      galleryLinks <- list()
+      
+      for(im in file.path('images/gallery', list.files('www/images/gallery'))){
+        gal_temp <- tags$a(href = im,
+                           'data-lightbox' = speciesData[i,'latinName'],
+                           'data-title' = paste(speciesData[i,'commonName'],
+                                                speciesData[i,'latinName'],
+                                                sep = ' - '))
+        galleryLinks <- append(galleryLinks, list(gal_temp))
+      }
+      
+      gallery <- tagList(galleryLinks)
+      
       temp_html <- tags$div(id = 'species',
                             align = 'center',
                        
                        ## left image
                        tags$div(id = 'image',
-                                a(href = speciesData[i,'image'],
-                                  'data-lightbox' = speciesData[i,'image'],
+                                a(href = 'images/gallery/20740822056_d5387189da_k.jpg',
+                                  'data-lightbox' = speciesData[i,'latinName'],
                                   'data-title' = paste(speciesData[i,'commonName'],
                                                        speciesData[i,'latinName'],
                                                        sep = ' - '),
@@ -43,6 +56,15 @@ shinyServer(function(input, output) {
                                       align = 'middle',
                                       height = '100%',
                                       alt = speciesData[i,'commonName']))
+                                ,
+                                HTML(as.character(htmltools::renderTags(gallery)$html))
+#                                 a(href = 'images/gallery/19488613634_efbaa545f3_b.jpg',
+#                                   'data-lightbox' = speciesData[i,'latinName'],
+#                                   'data-title' = paste(speciesData[i,'commonName'],
+#                                                        speciesData[i,'latinName'],
+#                                                        sep = ' - '))
+                                
+                                
                        ),
                        
                        ## Right text
