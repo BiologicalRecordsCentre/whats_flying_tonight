@@ -24,7 +24,7 @@ shinyServer(function(input, output) {
     
     for(i in 1:nrow(speciesData)){
       
-      big_phenology <- paste('phenology/', gsub(' ', '_', speciesData[i, 'latinName']), 'big.png', sep = '')
+      big_phenology <- paste('phenology/', gsub(' ', '_', speciesData[i, 'latinName']), '_big.png', sep = '')
       small_phenology <- paste('phenology/', gsub(' ', '_', speciesData[i, 'latinName']), '.png', sep = '')
       
       # Create species gallery links
