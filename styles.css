@@ -4,7 +4,8 @@ body {
 
 #species {
   max-width: 400px;
-  margin: 5px -8px 0px -8px;
+  margin: 3px 3px 3px 3px;
+  float: left;
   overflow: hidden;
   background-color:#eae9d4; /*frame colour*/
   /*add a drop shadow to the frame*/
