@@ -9,13 +9,15 @@ library(sparta)
 source(file = 'scripts/gatherData.R')
 
 # load datasets
-speciesDataRaw <- read.csv('data/UKMoths/speciesData.csv')
+speciesDataRaw <- read.csv('data/UKMoths/spDatImages.csv')
 
 # Add species URL
-image_information <- read.csv(file = 'data/UKMoths/speciesData_IK_v2.csv',
+# Might be missing some species and therefore URLs
+image_information <- read.csv(file = 'data/UKMoths/images/Images_requested_with_filenames.csv',
                               header = TRUE,
                               stringsAsFactors = FALSE)
-
+# Create this species URL object from the raw species images file
+# save and load
 sp_URLs <- tapply(image_information$UKMOTHSURL, image_information$BINOMIAL,
                   FUN = function(x) unique(dirname(x)))
 
@@ -103,13 +105,47 @@ shinyServer(function(input, output) {
           # Create species gallery links
           galleryLinks <- list()
           
-          for(im in file.path('images/gallery', list.files('www/images/gallery'))){
-            gal_temp <- tags$a(href = im,
-                               'data-lightbox' = speciesData[i, 'NAME'],
-                               'data-title' = paste(speciesData[i, 'NAME_ENGLISH'],
-                                                    speciesData[i, 'NAME'],
-                                                    sep = ' - '))
+          # Species images
+          im_tab <- image_information[image_information$NAME == speciesData[i, 'NAME'],]          
+          if(nrow(im_tab) == 0){
+            im_tab <- data.frame(FILENAME = c('NAimage.png'),
+                                 CONTRIBUTOR = c(''))
+          }
+          
+          im_tab$FILENAME <- file.path('images/wft_400', im_tab$FILENAME)
+          
+          for(j in 1:nrow(im_tab)){
+            
+            if(j == 1){ # For the first image use the thumbnail image
+              
+              gal_temp <-  tags$a(href = im_tab$FILENAME[1],
+                                  'data-lightbox' = speciesData[i,'NAME'],
+                                  'data-title' = paste(speciesData[i,'NAME_ENGLISH'],
+                                                       speciesData[i,'NAME'],
+                                                       paste('Credit: ', im_tab$CONTRIBUTOR[1]),
+                                                       sep = ' - '),
+                                  img(src = file.path(dirname(im_tab$FILENAME[1]),
+                                                      paste('thumbnail',
+                                                            basename(im_tab$FILENAME[1]),
+                                                            sep = '_')),
+                                      tabindex = 1,
+                                      align = 'middle',
+                                      height = '100%',
+                                      alt = speciesData[i,'NAME_ENGLISH']))
+              
+            } else { # add in the remaining images
+            
+              gal_temp <- tags$a(href = im_tab$FILENAME[j],
+                                 'data-lightbox' = speciesData[i, 'NAME'],
+                                 'data-title' = paste(speciesData[i, 'NAME_ENGLISH'],
+                                                      speciesData[i, 'NAME'],
+                                                      paste('Credit: ', im_tab$CONTRIBUTOR[j]),
+                                                      sep = ' - '))
+              
+            }
+            # Build up the gallery
             galleryLinks <- append(galleryLinks, list(gal_temp))
+            
           }
           
           gallery <- tagList(galleryLinks)
@@ -118,31 +154,13 @@ shinyServer(function(input, output) {
           temp_html <- tags$div(id = 'species',
                                 align = 'center',
                            
-                           ## left image
-                           tags$div(id = 'image',
-                                    a(href = 'images/gallery/21744826158_c8fc9881e9_z.jpg',
-                                      'data-lightbox' = speciesData[i,'NAME'],
-                                      'data-title' = paste(speciesData[i,'NAME_ENGLISH'],
-                                                           speciesData[i,'NAME'],
-                                                           sep = ' - '),
-                                      img(src = speciesData[i,'image'],
-                                          tabindex = 1,
-                                          align = 'middle',
-                                          height = '100%',
-                                          alt = speciesData[i,'NAME_ENGLISH']))
-                                    ,
-                                    HTML(as.character(htmltools::renderTags(gallery)$html))
-    #                                 a(href = 'images/gallery/19488613634_efbaa545f3_b.jpg',
-    #                                   'data-lightbox' = speciesData[i,'latinName'],
-    #                                   'data-title' = paste(speciesData[i,'commonName'],
-    #                                                        speciesData[i,'latinName'],
-    #                                                        sep = ' - '))
-                                    
-                                    
-                           ),
+                               ## left image
+                               tags$div(id = 'image',
+                                        HTML(as.character(htmltools::renderTags(gallery)$html))
+                               ),
                            
-                           ## Right text
-                           tags$div(id = 'text',
+                               ## Right text
+                               tags$div(id = 'text',
                                     a(href = speciesData[i, 'URL'],
                                       target = '_blank',
                                       strong(speciesData[i,'NAME_ENGLISH'])),
@@ -151,9 +169,6 @@ shinyServer(function(input, output) {
                                     br(),
                                     tags$span(paste(speciesData[i,'nrec'],
                                                     'records')
-  #                                             style=paste("color",
-  #                                                         speciesData[i, 'colour'],
-  #                                                         sep = ':')
                                               ),
                                     br(),
                                     ## Phenology plot

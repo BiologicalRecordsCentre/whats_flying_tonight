@@ -10,7 +10,9 @@ body {
 }
 
 #species {
-  max-width: 400px;
+  max-width: 98%;
+  width: 400px;
+  max-height: 118px;
   margin: 3px 3px 3px 3px;
   float: left;
   overflow: hidden;
@@ -83,9 +85,8 @@ body {
 
 #nodata {
     width: 290px;
-    top: 50%;
     background: black;
     color: white;
     font-size: x-large;
-    margin: auto;
+    margin: 10% auto;
 }
