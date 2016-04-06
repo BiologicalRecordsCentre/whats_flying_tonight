@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 *.Rproj
+www/
+data/
+demos/
+rsconnect/
