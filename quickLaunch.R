@@ -6,11 +6,7 @@ require(devtools)
 
 source_gist(9112634)
 
-package(c('shiny', 'ggplot2', 'RColorBrewer', 'grid', 'lme4',
-          'plyr', 'dplyr', 'sp', 'reshape2', 'ggplot2', 'gdata'))
-
-if(!require(sparta)) install_github('biologicalrecordscentre/sparta', force = TRUE)
-require(sparta)
+package(c('shiny'))
 
 library(shiny)
 

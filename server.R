@@ -4,9 +4,10 @@
 # http://shiny.rstudio.com
 #
 library(shiny)
-library(BRCmap)
-library(sparta)
-source(file = 'scripts/gatherData.R')
+# library(BRCmap)
+# library(sparta)
+source_scripts <- list.files('scripts/internal/', full.names = TRUE)
+for(i in source_scripts) source(i)
 
 # # load datasets
 # speciesDataRaw <- read.csv('data/UKMoths/spDatImages.csv', stringsAsFactors = FALSE)
@@ -34,7 +35,7 @@ shinyServer(function(input, output) {
   # Get hectad using location
   hectad_loc <- reactive({
     if(!is.null(input$lat)){
-      gr <- sparta::gps_latlon2gr(latitude = input$lat, longitude = input$long)
+      gr <- gps_latlon2gr(latitude = input$lat, longitude = input$long)
       hectad <- reformat_gr(gr$GRIDREF, prec_out = 10000)
     }
   }) 
