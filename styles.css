@@ -100,7 +100,7 @@ body {
     right: 3px;
     bottom: 45px;
     background-color: rgba(30,30,30,0.9);
-    visibility: hidden;
+    display: none;
 }
 
 #location_title{
@@ -126,7 +126,7 @@ body {
     right: 3px;
     bottom: 45px;
     background-color: rgba(30,30,30,0.9);
-    visibility: hidden;
+    display: none;
 }
 
 #about_text{

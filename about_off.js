@@ -1,2 +1,2 @@
-document.getElementById('about_display').style.visibility='hidden';
-document.getElementById('setting_button').style.visibility='visible';
+document.getElementById('about_display').style.display='none';
+document.getElementById('setting_button').style.display='inherit';
