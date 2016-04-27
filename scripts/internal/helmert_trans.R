@@ -1,5 +1,8 @@
 helmert_trans <-
   function(x, y, z, trans = "OSNItoOSGB", trans_params = NULL, full_output = FALSE){
+    
+    load('data/helmert_trans_vars.rdata')
+    
     # If trans_params is null then check where helmert_trans_vars data.frame has been loaded from package
     if(is.null(trans_params)){
       

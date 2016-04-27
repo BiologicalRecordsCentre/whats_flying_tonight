@@ -8,8 +8,6 @@
 
 gatherData <- function(hectad, jDay, radius = 1, dayBuffer = 4){
   
-  require(BRCmap)
-  
   # Get a the names of all the hectad we want data for
   hectads <- c(hectad, neigh_smooth(hectad, smooth_radius = radius))
   

@@ -27,6 +27,7 @@ function(latitude, longitude, out_projection = "OSGB", return_type = "both"){
     stop("ERROR - Lenghts of latitude and longitude do not match")
   }
   
+  load('data/datum_vars.rdata')
   
   # Convert to Cartesian
   org_cart = LatLong_Cartesian(latitude, longitude, "UTM30", datum_vars)

@@ -4,8 +4,11 @@
 # http://shiny.rstudio.com
 #
 library(shiny)
-# library(BRCmap)
-# library(sparta)
+
+# load tranformation objects
+# load('data/datum_vars.rdata')
+# load('data/helmert_trans_vars.rdata')
+
 source_scripts <- list.files('scripts/internal/', full.names = TRUE)
 for(i in source_scripts) source(i)
 
@@ -40,7 +43,7 @@ shinyServer(function(input, output) {
     }
   }) 
 
-  # Select hetad to use
+  # Select hectad to use
   hectad <- reactive({
     if(!is.null(input$lat) & !input$use_man){
       hectad_loc()
@@ -63,10 +66,22 @@ shinyServer(function(input, output) {
   })
   
   # Gather the data
-  speciesData <- reactive({
+  speciesData_raw <- reactive({
     if(!is.null(input$lat)){
+      
+      # Set date
+      if(!input$use_date){
+        
+        jDay <- as.POSIXlt(Sys.time())$yday
+        
+      } else if(input$use_date){
+        
+        jDay <- as.POSIXlt(input$date_man)$yday
+        
+      }
+      
       recData <- gatherData(hectad = hectad(),
-                            jDay = as.POSIXlt(Sys.time())$yday,
+                            jDay = jDay,
                             radius = 1,
                             dayBuffer = 4)
       
@@ -79,6 +94,20 @@ shinyServer(function(input, output) {
       }
     }
   }) 
+  
+  
+  # Sort the data
+  speciesData <- reactive({
+    
+    if(input$sortBy == 'records'){
+      return(speciesData_raw())
+    } else if(input$sortBy == 'english'){
+      return(speciesData_raw()[order(speciesData_raw()$NAME_ENGLISH), ])
+    } else if(input$sortBy == 'latin'){
+      return(speciesData_raw()[order(speciesData_raw()$NAME), ])
+    }
+    
+  })
 
   output$UI <- renderUI({
     
@@ -293,5 +322,58 @@ shinyServer(function(input, output) {
       tagList(html)
     }
   })
-
+  
+  # Settings box
+#   output$settings_js <- renderUI({
+#     
+#     if(input$setting_button %% 2 != 0){
+#       
+#       if(input$about_button %% 2 != 0){
+#         
+#         div(includeScript(path = 'about_off.js'),
+#             includeScript(path = 'settings_on.js'))
+#         
+#       } else {
+#         
+#         includeScript(path = 'settings_on.js')
+#         
+#       }
+#       
+#     } else {
+#       
+#       if(input$about_button %% 2 != 0){
+#       
+#         div(includeScript(path = 'settings_off.js'),
+#             includeScript(path = 'about_on.js'))
+#         
+#       } else {
+#         
+#         includeScript(path = 'settings_off.js')
+#         
+#       }
+#     }
+#   })
+  
+  # Settings box
+  output$button_js <- renderUI({
+    
+    # Deal with about button clicks
+    # on
+    if(input$about_button %% 2 != 0 & input$setting_button %% 2 == 0){
+      
+      div(includeScript(path = 'settings_off.js'),
+          includeScript(path = 'about_on.js'))
+          
+    } else if(input$about_button %% 2 == 0 & input$setting_button %% 2 != 0){
+          
+      div(includeScript(path = 'about_off.js'),
+          includeScript(path = 'settings_on.js'))          
+      
+    } else if(input$about_button %% 2 == 0 & input$setting_button %% 2 == 0){
+      
+      div(includeScript(path = 'about_off.js'),
+          includeScript(path = 'settings_off.js'))
+      
+    }
+  })
 })

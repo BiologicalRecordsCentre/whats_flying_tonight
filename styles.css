@@ -52,6 +52,7 @@ body {
     left: 0px;
     background: black;
     color: white;
+    height: 46px;
 }
 
 #geolocation_denied {
@@ -63,24 +64,98 @@ body {
 }
 
 .checkbox {
-    position: fixed;
-    bottom: 0;
-    background-color: black;
+    position: relative;
     color: white;
-    left: 0;
     font-size: larger;
-    width: 100%;
     height: 40px;
     margin: auto;
     padding-left: 15px;
-    padding-top: 9px;
+    padding-top: 3px;
+    float: left;
 }
 
-.shiny-input-container{
+/*.shiny-input-container{
+    position: relative;
+    margin: 0;
+}*/
+
+#setting_button{
     position: fixed;
     bottom: 3px;
-    margin: 0;
-    left: 211px;
+    margin: 2px;
+    left: 3px;
+}
+
+#about_button{
+    position: fixed;
+    bottom: 3px;
+    margin: 2px;
+    right: 3px;
+}
+
+#settings_display{
+    position: fixed;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 45px;
+    background-color: rgba(30,30,30,0.9);
+    visibility: hidden;
+}
+
+#location_title{
+  font-size: larger;
+  font-weight: 700;
+  padding-left: 15px;
+  padding-top: 15px;
+  color: white;
+}
+
+#date_title{
+  font-size: larger;
+  font-weight: 700;
+  padding-left: 15px;
+  padding-top: 15px;
+  color: white;
+}
+
+#about_display{
+    position: fixed;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 45px;
+    background-color: rgba(30,30,30,0.9);
+    visibility: hidden;
+}
+
+#about_text{
+  width: 200px;
+	height: 100px;
+	position: absolute;
+	color: white;
+	left: 50%;
+	top: 50%;
+	margin: -50px 0 0 -100px;
+  
+}
+
+#hectad_man{
+  width: 200px;
+  margin-left: 10px;
+}
+
+#sortBy{
+  position: relative;
+  color: white;
+  font-size: larger;
+  padding-left: 15px;
+  padding-top: 20px;
+}
+
+#date_man{
+  width: 200px;
+  margin-left: 10px;
 }
 
 #nodata {
