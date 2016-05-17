@@ -84,9 +84,18 @@ shinyUI(fluidPage(
                   selected = 'Top 10')
       ),
   div(id = 'about_display',
-      div(id = 'about_text',
-          h4('Information about where the data came from. Data attribution. Work attribution. How to find out more. Logos.')
-          )),
+      img(src = 'BClogo.gif', style = 'width: 100%; max-width: 300px'),
+      p(paste("What's flying tonight uses data gathered by the National Moth",
+            "Recording scheme [link] from 2005 to 2015. We summarise the NMRS data",
+            "for your 10km grid-square combined with neigbouring grid-squares",
+            "and present the number of records for each moth species, in this area,",
+            "for a 9 day period centered on today's date."),
+        style = 'color: white; '),
+      p("Data used with permission of Butterfly Conservation", 
+        style = 'color: white'),
+      p("Site built by the Biological Records Centre",
+        style = 'color: white'),
+      img(src = 'BRClogo.png', style = 'width: 100%; max-width: 300px')),
   
   includeScript("lightbox.js")
   

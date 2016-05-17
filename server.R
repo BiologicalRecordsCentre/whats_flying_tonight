@@ -175,11 +175,16 @@ shinyServer(function(input, output) {
                                                        speciesData[i,'NAME'],
                                                        paste('Credit: ', thumb_credit[1]),
                                                        sep = ' - '),
-                                  img(src = gsub('^www/', '', file.path(thumb_dir, thumb_small)),
-                                      tabindex = 1,
-                                      align = 'middle',
-                                      height = '100%',
-                                      alt = speciesData[i,'NAME_ENGLISH']))
+                                  style = 'width: 100%',
+                                  # img(src = gsub('^www/', '', file.path(thumb_dir, thumb_small)),
+                                  #     tabindex = 1,
+                                  #     align = 'middle',
+                                  #     height = '100%',
+                                  #     alt = speciesData[i,'NAME_ENGLISH'])
+                                  div(style = paste("background: url('",
+                                                    gsub('^www/', '', file.path(thumb_dir, thumb_small)),
+                                                    "') no-repeat center center; width: 100%; height: 118px;", sep = ''))
+                                  )
               
               galleryLinks <- append(galleryLinks, list(gal_temp))
               

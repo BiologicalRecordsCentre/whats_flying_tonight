@@ -41,6 +41,7 @@ body {
 #image {
   overflow: hidden;
   float: left;
+  width: 38%;
   max-width: 41%;
 }
 
