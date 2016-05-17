@@ -23,6 +23,21 @@ body {
   border-radius: 4px;
 }
 
+#show_n {
+  max-width: 98%;
+  width: 400px;
+  height: 50px;
+  margin: 3px 3px 40px 3px;
+  float: left;
+  overflow: hidden;
+  background-color:#eae9d4; /*frame colour*/
+  /*add a drop shadow to the frame*/
+  box-shadow: 0 0 9px #080808;
+  /*and give the corners a small curve*/
+  border-radius: 4px;
+}
+
+
 #image {
   overflow: hidden;
   float: left;
@@ -115,7 +130,6 @@ body {
   font-size: larger;
   font-weight: 700;
   padding-left: 15px;
-  padding-top: 15px;
   color: white;
 }
 
@@ -145,12 +159,16 @@ body {
   margin-left: 10px;
 }
 
+#NtoShow{
+  width: 200px;
+  margin-left: 10px;
+}
+
 #sortBy{
   position: relative;
   color: white;
   font-size: larger;
   padding-left: 15px;
-  padding-top: 20px;
 }
 
 #date_man{

@@ -73,7 +73,16 @@ shinyUI(fluidPage(
                    label = 'Sort by',
                    choices = list('Number of records' = 'records',
                                   'English name' = 'english',
-                                  'Latin name' = 'latin'))),
+                                  'Latin name' = 'latin')),
+      tags$b(id = 'date_title', 'Show...'),
+      br(),
+      selectInput('NtoShow',
+                  label = NULL,
+                  c('All', 'Top 10', 'Top 25', 'Top 50', 'Top 100'),
+                  selectize = FALSE,
+                  multiple = FALSE,
+                  selected = 'Top 10')
+      ),
   div(id = 'about_display',
       div(id = 'about_text',
           h4('Information about where the data came from. Data attribution. Work attribution. How to find out more. Logos.')

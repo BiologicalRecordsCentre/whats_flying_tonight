@@ -108,6 +108,23 @@ shinyServer(function(input, output) {
     }
     
   })
+  
+  # how many species to show
+  n_to_show <- reactive({
+    
+    if(input$NtoShow == 'All'){
+      return(nrow(speciesData()))
+    } else if(input$NtoShow == 'Top 10'){
+      return(min(nrow(speciesData()), 10))
+    } else if(input$NtoShow == 'Top 25'){
+      return(min(nrow(speciesData()), 25))
+    } else if(input$NtoShow == 'Top 50'){
+      return(min(nrow(speciesData()), 50))
+    } else if(input$NtoShow == 'Top 100'){
+      return(min(nrow(speciesData()), 100))
+    }
+    
+  })
 
   output$UI <- renderUI({
     
@@ -120,7 +137,7 @@ shinyServer(function(input, output) {
       # If data are present build the species panels
       if(!is.null(speciesData)){
         
-        for(i in 1:nrow(speciesData)){
+        for(i in 1:n_to_show()){
           
           big_phenology <- speciesData[i, 'phenobig']
           small_phenology <- speciesData[i, 'phenosmall']
@@ -221,41 +238,7 @@ shinyServer(function(input, output) {
                                     alt = 'No species'))
             galleryLinks <- append(galleryLinks, list(gal_temp))
           }
-          
-#           for(j in 1:nrow(im_tab)){
-#             
-#             if(j == 1){ # For the first image use the thumbnail image
-#               
-#               gal_temp <-  tags$a(href = im_tab$FILENAME[1],
-#                                   'data-lightbox' = speciesData[i,'NAME'],
-#                                   'data-title' = paste(speciesData[i,'NAME_ENGLISH'],
-#                                                        speciesData[i,'NAME'],
-#                                                        paste('Credit: ', im_tab$CONTRIBUTOR[1]),
-#                                                        sep = ' - '),
-#                                   img(src = file.path(dirname(im_tab$FILENAME[1]),
-#                                                       paste('thumbnail',
-#                                                             basename(im_tab$FILENAME[1]),
-#                                                             sep = '_')),
-#                                       tabindex = 1,
-#                                       align = 'middle',
-#                                       height = '100%',
-#                                       alt = speciesData[i,'NAME_ENGLISH']))
-#               
-#             } else { # add in the remaining images
-#             
-#               gal_temp <- tags$a(href = im_tab$FILENAME[j],
-#                                  'data-lightbox' = speciesData[i, 'NAME'],
-#                                  'data-title' = paste(speciesData[i, 'NAME_ENGLISH'],
-#                                                       speciesData[i, 'NAME'],
-#                                                       paste('Credit: ', im_tab$CONTRIBUTOR[j]),
-#                                                       sep = ' - '))
-#               
-#             }
-#             # Build up the gallery
-#             galleryLinks <- append(galleryLinks, list(gal_temp))
-#             
-#           }
-          
+
           gallery <- tagList(galleryLinks)
           
           # Create the species div
@@ -298,6 +281,22 @@ shinyServer(function(input, output) {
           )
             
           html <- append(html, list(temp_html))
+          
+          # If this the last species say what show length we are working with
+          if(i == n_to_show()){
+            
+            # Create the species div
+            show_n_html <- tags$div(id = 'show_n',
+                                  align = 'center',
+                                  
+                                  ## left image
+                                  tags$div(id = 'show_length',
+                                           paste('Showing', input$NtoShow, '- this can be changed in settings')
+                                  ))
+            
+            html <- append(html, list(show_n_html))
+            
+          }
             
         } # end of species loop
         

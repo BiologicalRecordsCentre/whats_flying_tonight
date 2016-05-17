@@ -57,7 +57,8 @@ sp_review <- merge(x = sp_im,
                    y = sp_freq,
                    by.x = 'species',
                    by.y = 'name',
-                   all = TRUE, 
+                   all.x = FALSE,
+                   all.y = TRUE,
                    incomparables = NA)
 
 hist(sp_review$n_images)
@@ -98,4 +99,9 @@ head(only_thumb)
 hist(only_thumb$Freq)
 write.csv(only_thumb,
           file = 'data/only_thumb_species.csv',
+          row.names = FALSE)
+
+## 4. The whole lot
+write.csv(sp_review,
+          file = 'data/all_images_species.csv',
           row.names = FALSE)
