@@ -5,10 +5,6 @@
 #
 library(shiny)
 
-# load tranformation objects
-# load('data/datum_vars.rdata')
-# load('data/helmert_trans_vars.rdata')
-
 source_scripts <- list.files('scripts/internal/', full.names = TRUE)
 for(i in source_scripts) source(i)
 
@@ -145,15 +141,6 @@ shinyServer(function(input, output) {
           # Create species gallery links
           galleryLinks <- list()
           
-          # Species images
-#           im_tab <- image_information[image_information$NAME == speciesData[i, 'NAME'],]          
-#           if(nrow(im_tab) == 0){
-#             im_tab <- data.frame(FILENAME = c('NAimage.png'),
-#                                  CONTRIBUTOR = c(''))
-#           }
-#           
-#           im_tab$FILENAME <- file.path('images/wft_400', im_tab$FILENAME)
-          
           sp_name <- gsub(' ', '_', speciesData[i, 'NAME'])
           images_dir <- 'www/images/species'
           species_dir <- file.path(images_dir, sp_name)
@@ -176,14 +163,9 @@ shinyServer(function(input, output) {
                                                        paste('Credit: ', thumb_credit[1]),
                                                        sep = ' - '),
                                   style = 'width: 100%',
-                                  # img(src = gsub('^www/', '', file.path(thumb_dir, thumb_small)),
-                                  #     tabindex = 1,
-                                  #     align = 'middle',
-                                  #     height = '100%',
-                                  #     alt = speciesData[i,'NAME_ENGLISH'])
                                   div(style = paste("background: url('",
                                                     gsub('^www/', '', file.path(thumb_dir, thumb_small)),
-                                                    "') no-repeat center center; width: 100%; height: 118px;", sep = ''))
+                                                    "') no-repeat center center; width: 100%; height: 124px;", sep = ''))
                                   )
               
               galleryLinks <- append(galleryLinks, list(gal_temp))
@@ -257,12 +239,11 @@ shinyServer(function(input, output) {
                            
                                ## Right text
                                tags$div(id = 'text',
-                                    a(href = speciesData[i, 'URL'],
+                                    p(a(href = speciesData[i, 'URL'],
                                       target = '_blank',
                                       strong(speciesData[i,'NAME_ENGLISH'])),
-                                    br(),
-                                    em(speciesData[i,'NAME']),
-                                    br(),
+                                      em(paste0('(', speciesData[i,'NAME'], ')')),
+                                      style = 'margin: 0px 0 0px;'),
                                     tags$span(paste(speciesData[i,'nrec'],
                                                     'records')
                                               ),
@@ -315,48 +296,10 @@ shinyServer(function(input, output) {
         html <- list(temp_html)
         
       }
-      # Create bottom box
-#       bot_box <- tags$div(id = 'bottom-box',
-#                           align = 'center',
-#                           tags$span(paste('You are located in hectad',
-#                                           hectad())))
-#       
-#       html <- append(html, list(bot_box))
-      
+
       tagList(html)
     }
   })
-  
-  # Settings box
-#   output$settings_js <- renderUI({
-#     
-#     if(input$setting_button %% 2 != 0){
-#       
-#       if(input$about_button %% 2 != 0){
-#         
-#         div(includeScript(path = 'about_off.js'),
-#             includeScript(path = 'settings_on.js'))
-#         
-#       } else {
-#         
-#         includeScript(path = 'settings_on.js')
-#         
-#       }
-#       
-#     } else {
-#       
-#       if(input$about_button %% 2 != 0){
-#       
-#         div(includeScript(path = 'settings_off.js'),
-#             includeScript(path = 'about_on.js'))
-#         
-#       } else {
-#         
-#         includeScript(path = 'settings_off.js')
-#         
-#       }
-#     }
-#   })
   
   # Settings box
   output$button_js <- renderUI({

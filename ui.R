@@ -36,8 +36,13 @@ shinyUI(fluidPage(
             }, 1100)
           }
          });
-        ')
-  ),
+        '),
+    HTML('<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+          <meta name="mobile-web-app-capable" content="yes">
+          <meta name="apple-mobile-web-app-capable" content="yes">
+          <meta name="apple-mobile-web-app-title" content="Whats flying tonight">
+          <meta name="application-name" content="Whats flying tonight">')
+    ),
   
   htmlOutput('UI'),
   htmlOutput('geolocation_denied'),
@@ -56,7 +61,7 @@ shinyUI(fluidPage(
                   sort(gsub('.rdata$',
                             '',
                             list.files('data/hectad_counts/'))),
-                  selectize = FALSE,
+                  selectize = TRUE,
                   multiple = FALSE),
       div(id = 'date_title', tags$b('Date')),
       checkboxInput('use_date',
@@ -84,18 +89,23 @@ shinyUI(fluidPage(
                   selected = 'Top 10')
       ),
   div(id = 'about_display',
-      img(src = 'BClogo.gif', style = 'width: 100%; max-width: 300px'),
-      p(paste("What's flying tonight uses data gathered by the National Moth",
-            "Recording scheme [link] from 2005 to 2015. We summarise the NMRS data",
-            "for your 10km grid-square combined with neigbouring grid-squares",
-            "and present the number of records for each moth species, in this area,",
-            "for a 9 day period centered on today's date."),
-        style = 'color: white; '),
-      p("Data used with permission of Butterfly Conservation", 
-        style = 'color: white'),
-      p("Site built by the Biological Records Centre",
-        style = 'color: white'),
-      img(src = 'BRClogo.png', style = 'width: 100%; max-width: 300px')),
+      a(href = 'http://butterfly-conservation.org/',
+        target = '_blank',
+        img(src = 'BClogo.gif', style = 'width: 93%; max-width: 300px; display: block; margin-top: 8px; margin-left: auto; margin-right: auto;')),
+      p(HTML(paste("What's flying tonight uses data gathered by the <a class = 'about', href =",
+              "'http://www.mothscount.org/text/27/national_moth_recording_scheme.html'",
+              " target='_blank'> National Moth Recording scheme</a> from 2005 to 2015. We summarise the NMRS data",
+              "for your 10km grid-square combined with neigbouring grid-squares",
+              "and present the number of records for each moth species, in this area,",
+              "for a 9 day period centered on today's date.")),
+              style = 'width: 98%; max-width: 300px; text-align: center; color: white; display: block; background-color: dimgray; margin-top: 10px; margin-left: auto; margin-right: auto;'),
+      p(HTML("Data used with permission of <a class = 'about', href = 'http://butterfly-conservation.org/', target = '_blank'>Butterfly Conservation</a>"), 
+        style = 'width: 98%; max-width: 300px; text-align: center; color: white; display: block; background-color: dimgray; margin-left: auto; margin-right: auto;'),
+      p(HTML("Site built by the <a class = 'about', href = 'http://www.brc.ac.uk/', target = '_blank'>Biological Records Centre</a>"),
+        style = 'width: 98%; max-width: 300px; text-align: center; color: white; display: block; background-color: dimgray; margin-left: auto; margin-right: auto;'),
+      a(href = 'http://www.brc.ac.uk/',
+        target = '_blank',
+        img(src = 'BRClogo.png', style = 'width: 93%; max-width: 300px; display: block; margin-left: auto; margin-right: auto;'))),
   
   includeScript("lightbox.js")
   
