@@ -14,6 +14,12 @@ shinyUI(fluidPage(
   
   tags$head(
     
+    HTML('<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+          <meta name="mobile-web-app-capable" content="yes">
+          <meta name="apple-mobile-web-app-capable" content="yes">
+          <meta name="apple-mobile-web-app-title" content="Whats flying tonight">
+          <meta name="application-name" content="Whats flying tonight">')
+    ),
     # Include our custom CSS
     includeCSS("styles.css"),
     includeCSS("lightbox.css"),
@@ -40,12 +46,7 @@ shinyUI(fluidPage(
           }
          });
         '),
-    HTML('<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
-          <meta name="mobile-web-app-capable" content="yes">
-          <meta name="apple-mobile-web-app-capable" content="yes">
-          <meta name="apple-mobile-web-app-title" content="Whats flying tonight">
-          <meta name="application-name" content="Whats flying tonight">')
-    ),
+    
   
   # Loading text
   div(id = 'loading',
