@@ -39,6 +39,17 @@ a.about:active {
     margin-left: 10px;
 }
 
+#loading{
+  height: 200px;
+  width: 250px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-left: -125px;
+  margin-top: -150px;
+  text-align: center;
+}
+
 #species {
   max-width: 98%;
   width: 400px;
@@ -102,14 +113,14 @@ a.about:active {
 }
 
 #geolocation_denied {
-    position: absolute;
-    width: 200px;
-    bottom: 50%;
-    background: black;
-    color: white;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    height: 200px;
+    width: 250px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -125px;
+    margin-top: -100px;
+    text-align: center;
 }
 
 .checkbox {

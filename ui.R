@@ -6,8 +6,11 @@
 #
 
 library(shiny)
+library(shinyjs)
 
 shinyUI(fluidPage(
+  
+  useShinyjs(),
   
   tags$head(
     
@@ -17,7 +20,7 @@ shinyUI(fluidPage(
     includeScript("jquery-2.1.4.js"),
     # htmlOutput('settings_js'),
     # htmlOutput('about_js'),
-    htmlOutput('button_js'),
+    # htmlOutput('button_js'),
     tags$script('
         $(document).ready(function () {
           navigator.geolocation.getCurrentPosition(onSuccess, onError);
@@ -44,8 +47,17 @@ shinyUI(fluidPage(
           <meta name="application-name" content="Whats flying tonight">')
     ),
   
+  # Loading text
+  div(id = 'loading',
+      h3('Loading...'),
+      p("Using your location and today's date to build your custom report"),
+      img(src = 'images/startup.gif', alt = 'loading', style = 'margin-top: 20px')),
+  # No gelocation text
+  hidden(h5(id = 'geolocation_denied',
+            align = 'center',
+            "You have denied access to your location. To allow access clear your cache for this page and then select 'allow' when prompted")
+  ),
   htmlOutput('UI'),
-  htmlOutput('geolocation_denied'),
   div(id = 'bottom-box'),
   actionButton('setting_button', 'Settings'),
   actionButton('about_button', 'About'),
@@ -86,7 +98,7 @@ shinyUI(fluidPage(
                   c('All', 'Top 10', 'Top 25', 'Top 50', 'Top 100'),
                   selectize = FALSE,
                   multiple = FALSE,
-                  selected = 'Top 10')
+                  selected = 'Top 25')
       ),
   div(id = 'about_display',
       a(href = 'http://butterfly-conservation.org/',

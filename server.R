@@ -4,6 +4,7 @@
 # http://shiny.rstudio.com
 #
 library(shiny)
+library(shinyjs)
 
 source_scripts <- list.files('scripts/internal/', full.names = TRUE)
 for(i in source_scripts) source(i)
@@ -49,14 +50,12 @@ shinyServer(function(input, output) {
   })
   
   # If geolocation is not give this is displayed
-  output$geolocation_denied <- renderUI({
+  # and the loading text is hidden
+  observe({
     if(!is.null(input$geolocation) & is.null(input$lat)){
       if(!input$geolocation){
-        
-        h5(id = 'geolocation_denied',
-           align = 'center',
-           "You have denied access to your location. To allow access clear your cache for this page and then select 'allow' when prompted")
-        
+        hide('loading', anim = FALSE)
+        show('geolocation_denied', anim = TRUE, animType = 'fade')
       }
     } 
   })
@@ -122,7 +121,8 @@ shinyServer(function(input, output) {
     
   })
 
-  output$UI <- renderUI({
+  # Build species divs
+  divList <- reactive({
     
     if(!is.null(input$lat)){
       
@@ -300,26 +300,62 @@ shinyServer(function(input, output) {
       tagList(html)
     }
   })
+
+  # output species divs
+  output$UI <- renderUI({
+    
+    divList()
+    
+  })
+  
+  # Loading div
+  observe({
+    if(!is.null(divList())){
+      hide('loading', anim = FALSE)
+    }
+  })
   
   # Settings box
-  output$button_js <- renderUI({
+  observe({
     
     # Deal with about button clicks
     # on
     if(input$about_button %% 2 != 0 & input$setting_button %% 2 == 0){
       
-      div(includeScript(path = 'settings_off.js'),
-          includeScript(path = 'about_on.js'))
-          
+      # div(includeScript(path = 'settings_off.js'),
+      #     includeScript(path = 'about_on.js'))
+      hide(id = 'settings_display', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      show(id = 'about_display',  anim = TRUE,
+           animType = 'fade', time = 0.2)
+      hide(id = 'setting_button', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      
+      
     } else if(input$about_button %% 2 == 0 & input$setting_button %% 2 != 0){
           
-      div(includeScript(path = 'about_off.js'),
-          includeScript(path = 'settings_on.js'))          
+      # div(includeScript(path = 'about_off.js'),
+      #     includeScript(path = 'settings_on.js'))          
+      show(id = 'settings_display', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      hide(id = 'about_button', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      hide(id = 'about_display', anim = TRUE,
+           animType = 'fade', time = 0.2)
       
     } else if(input$about_button %% 2 == 0 & input$setting_button %% 2 == 0){
       
-      div(includeScript(path = 'about_off.js'),
-          includeScript(path = 'settings_off.js'))
+      # div(includeScript(path = 'about_off.js'),
+      #     includeScript(path = 'settings_off.js'))
+      hide(id = 'about_display', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      hide(id = 'settings_display', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      show(id = 'about_button', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      show(id = 'setting_button', anim = TRUE,
+           animType = 'fade', time = 0.2)
+      
       
     }
   })
