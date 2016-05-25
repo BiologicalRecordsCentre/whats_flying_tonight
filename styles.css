@@ -4,22 +4,22 @@ body {
 
 /* unvisited link */
 a.about:link {
-    color: #66ffff;
+    color: #A6D6FF;
 }
 
 /* visited link */
 a.about:visited {
-    color: #66ffff;
+    color: #A6D6FF;
 }
 
 /* mouse over link */
 a.about:hover {
-    color: #00cccc;
+    color: #73BBF9;
 }
 
 /* selected link */
 a.about:active {
-    color: #00cccc;
+    color: #73BBF9;
 }
 
 .container-fluid {

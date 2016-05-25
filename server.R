@@ -190,8 +190,8 @@ shinyServer(function(input, output) {
             } else {
               # If no thumbnail exists
               # use 'no image'
-              thumb_small <- 'images/thumbnail_NAimage.png'
-              thumb_big <- 'images/NAimage.png'
+              thumb_small <- 'images/no_image_thumb.gif'
+              thumb_big <- 'images/no_image.gif'
               
               gal_temp <-  tags$a(href = thumb_big,
                                   'data-lightbox' = speciesData[i, 'NAME'],
@@ -210,8 +210,8 @@ shinyServer(function(input, output) {
           } else {
             # there is no image folder for this species
             # use 'no image'
-            thumb_small <- 'images/thumbnail_NAimage.png'
-            thumb_big <- 'images/NAimage.png'
+            thumb_small <- 'images/no_image_thumb.gif'
+            thumb_big <- 'images/no_image.gif'
             
             gal_temp <-  tags$a(href = thumb_big,
                                 'data-lightbox' = speciesData[i, 'NAME'],
