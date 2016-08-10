@@ -130,6 +130,21 @@ shinyServer(function(input, output) {
       
       speciesData <- speciesData()
       
+      # Add location div at the top
+      hec_div <- tags$div(id = 'tet_top',
+                          align = 'center',
+                          tags$div(span('Showing larger moths likly to be flying in',
+                                         a(hectad(), href = paste('http://www.bnhs.co.uk/focuson/grabagridref/html/index.htm?gr=',
+                                                                  hectad(),
+                                                                  '&en100=false&en1000=false&en2000=false',
+                                                                  sep = ''),
+                                         target = '_blank'),
+                                         'tonight')
+                                   )
+                          )
+      
+      html <- append(html, list(hec_div))
+        
       # If data are present build the species panels
       if(!is.null(speciesData)){
         
@@ -145,6 +160,8 @@ shinyServer(function(input, output) {
           images_dir <- 'www/images/species'
           species_dir <- file.path(images_dir, sp_name)
           thumb_dir <- file.path(images_dir, sp_name, 'thumbnail')
+          
+          
           
           if(dir.exists(species_dir)){ 
             # there is a folder for this species
@@ -315,48 +332,69 @@ shinyServer(function(input, output) {
     }
   })
   
-  # Settings box
-  observe({
-    
-    # Deal with about button clicks
-    # on
-    if(input$about_button %% 2 != 0 & input$setting_button %% 2 == 0){
-      
-      # div(includeScript(path = 'settings_off.js'),
-      #     includeScript(path = 'about_on.js'))
-      hide(id = 'settings_display', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      show(id = 'about_display',  anim = TRUE,
-           animType = 'fade', time = 0.2)
-      hide(id = 'setting_button', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      
-      
-    } else if(input$about_button %% 2 == 0 & input$setting_button %% 2 != 0){
-          
-      # div(includeScript(path = 'about_off.js'),
-      #     includeScript(path = 'settings_on.js'))          
-      show(id = 'settings_display', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      hide(id = 'about_button', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      hide(id = 'about_display', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      
-    } else if(input$about_button %% 2 == 0 & input$setting_button %% 2 == 0){
-      
-      # div(includeScript(path = 'about_off.js'),
-      #     includeScript(path = 'settings_off.js'))
-      hide(id = 'about_display', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      hide(id = 'settings_display', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      show(id = 'about_button', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      show(id = 'setting_button', anim = TRUE,
-           animType = 'fade', time = 0.2)
-      
-      
-    }
-  })
+
+  ###############################
+  ## Settings and About boxes ###
+  ###############################
+  
+  # Settings button
+  observeEvent(input$setting_button,
+                {
+                      show(id = 'settings_display', anim = TRUE,
+                           animType = 'fade', time = 0.2)
+                      show(id = 'settings_exit',  anim = TRUE,
+                           animType = 'fade', time = 0.2)
+                      hide(id = 'about_button', anim = TRUE,
+                           animType = 'fade', time = 0.2)
+                      hide(id = 'about_display', anim = TRUE,
+                           animType = 'fade', time = 0.2)
+                })
+  
+  # Settings close button
+  observeEvent(input$settings_exit,
+                {
+                  hide(id = 'about_display', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  hide(id = 'settings_display', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  hide(id = 'settings_exit',  anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  hide(id = 'about_exit',  anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  show(id = 'about_button', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  show(id = 'setting_button', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                })
+  
+  # About button
+  observeEvent(input$about_button,
+                {
+                  hide(id = 'settings_display', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  show(id = 'about_exit',  anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  show(id = 'about_display',  anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  hide(id = 'setting_button', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                })
+  
+  # # About close button
+  observeEvent(input$about_exit,
+                {
+                  hide(id = 'about_display', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  hide(id = 'settings_display', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  hide(id = 'settings_exit',  anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  hide(id = 'about_exit',  anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  show(id = 'about_button', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                  show(id = 'setting_button', anim = TRUE,
+                       animType = 'fade', time = 0.2)
+                })
+
 })

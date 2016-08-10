@@ -79,6 +79,20 @@ a.about:active {
   border-width: thin;
 }
 
+#tet_top {
+  max-width: 98%;
+  width: 400px;
+  margin: 3px 3px 3px 3px;
+  float: left;
+  overflow: hidden;
+  background-color:#eae9d4; /*frame colour*/
+  /*and give the corners a small curve*/
+  border-radius: 4px;
+  border-color: grey;
+  border-style: solid;
+  border-width: thin;
+}
+
 
 #image {
   overflow: hidden;
@@ -153,8 +167,31 @@ a.about:active {
     right: 3px;
 }
 
+#about_exit{
+    position: fixed;
+    z-index: 2;
+    top: 3px;
+    margin: 0px;
+    right: 3px;
+    padding: 0px;
+    height: 21px;
+    width: 20px;
+}
+
+#settings_exit{
+    position: fixed;
+    z-index: 2;
+    top: 3px;
+    margin: 0px;
+    right: 3px;
+    padding: 0px;
+    height: 21px;
+    width: 20px;
+}
+
 #settings_display{
     position: fixed;
+    z-index: 1;
     top: 0px;
     left: 0px;
     right: 0px;
@@ -180,6 +217,7 @@ a.about:active {
 
 #about_display{
     position: fixed;
+    z-index: 1;
     top: 0px;
     left: 0px;
     right: 0px;

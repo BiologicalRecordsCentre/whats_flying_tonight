@@ -66,8 +66,11 @@ hist(sp_review$n_images)
 # add speceies english names
 sp_review$english_name <- speciesDataRaw$NAME_ENGLISH[match(sp_review$sp_names, speciesDataRaw$CONCEPT)]
 
+# add taxanomic rank
+sp_review$rank <- speciesDataRaw$RANK[match(sp_review$sp_names, speciesDataRaw$CONCEPT)]
+
 ## 1. Species that have no image folder
-# Should these be in th data?
+# Should these be in the data?
 no_folder <- sp_review[is.na(sp_review$n_images), ]
 no_folder <- no_folder[order(-no_folder$Freq), ]
 

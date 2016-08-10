@@ -18,36 +18,28 @@ shinyUI(fluidPage(
           <meta name="mobile-web-app-capable" content="yes">
           <meta name="apple-mobile-web-app-capable" content="yes">
           <meta name="apple-mobile-web-app-title" content="Whats flying tonight">
-          <meta name="application-name" content="Whats flying tonight">')
-    ),
+          <meta name="application-name" content="Whats flying tonight">
+          <link rel="icon" href="favicon.ico" type="image/x-icon" >
+          <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png" >
+          <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" >
+          <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png" >
+          <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" >
+          <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png" >
+          <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png" >
+          <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png" >
+          <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png" >'),
     # Include our custom CSS
     includeCSS("styles.css"),
     includeCSS("lightbox.css"),
+    includeCSS('addtohomescreen.css'),
     includeScript("jquery-2.1.4.js"),
-    # htmlOutput('settings_js'),
-    # htmlOutput('about_js'),
-    # htmlOutput('button_js'),
-    tags$script('
-        $(document).ready(function () {
-          navigator.geolocation.getCurrentPosition(onSuccess, onError);
-          
-          function onError (err) {
-            Shiny.onInputChange("geolocation", false);
-          }
-          
-          function onSuccess (position) {
-            setTimeout(function () {
-              var coords = position.coords;
-              console.log(coords.latitude + ", " + coords.longitude);
-              Shiny.onInputChange("geolocation", true);
-              Shiny.onInputChange("lat", coords.latitude);
-              Shiny.onInputChange("long", coords.longitude);
-            }, 1100)
-          }
-         });
-        '),
-    
-  
+    includeScript(path = 'www/location.js'),
+    includeScript(path = 'www/addtohomescreen.js'),
+    tags$script('addToHomescreen({
+                                  icon: false
+                             });')
+  ),
+
   # Loading text
   div(id = 'loading',
       h3('Loading...'),
@@ -64,6 +56,8 @@ shinyUI(fluidPage(
   div(id = 'bottom-box'),
   actionButton('setting_button', 'Settings'),
   actionButton('about_button', 'About'),
+  hidden(actionButton('about_exit', 'X')),
+  hidden(actionButton('settings_exit', 'X')),
   # if odd ie clicked on
   div(id = 'settings_display',
       tags$b(id = 'location_title', 'Location'),
@@ -107,20 +101,20 @@ shinyUI(fluidPage(
       a(href = 'http://butterfly-conservation.org/',
         target = '_blank',
         img(src = 'BClogo.gif', style = 'width: 93%; max-width: 300px; display: block; margin-top: 8px; margin-left: auto; margin-right: auto; border: 10px; border-style: solid; border-color: white;')),
-      p(HTML(paste("What's flying tonight uses data gathered by the <a class = 'about', href =",
+      p(HTML(paste("What's flying tonight uses UK sightings of larger (macro-) moths gathered by the <a class = 'about', href =",
               "'http://www.mothscount.org/text/27/national_moth_recording_scheme.html'",
-              " target='_blank'> National Moth Recording scheme</a> from 2005 to 2015. We summarise the NMRS data",
-              "for your 10km grid-square combined with neigbouring grid-squares",
-              "and present the number of records for each moth species, in this area,",
-              "for a 9 day period centered on today's date.")),
-              style = 'width: 98%; max-width: 300px; font-size: small; text-align: center; color: white; display: block; background-color: dimgray; margin-top: 10px; margin-left: auto; margin-right: auto;'),
-      p(HTML("Data used with permission of <a class = 'about', href = 'http://butterfly-conservation.org/', target = '_blank'>Butterfly Conservation</a>"), 
-        style = 'width: 98%; max-width: 300px; font-size: small; text-align: center; color: white; display: block; background-color: dimgray; margin-left: auto; margin-right: auto;'),
+              " target='_blank'> National Moth Recording scheme</a> from 2005 to 2013.",
+              "The list shows the larger moth species previously recorded in this area (a block of nine 10km x 10km grid squares centred on your location) at around this date (a nine-day period centred on today’s date) and the number of sightings of each.")),
+              style = 'width: 98%; max-width: 300px; font-size: small; text-align: center; color: white; display: block; background-color: dimgray; margin-top: 5px; margin-bottom: 5px; margin-left: auto; margin-right: auto; padding: 1px 1px 1px 1px;'),
       p(HTML(paste0("Site built by the <a class = 'about', href = 'http://www.brc.ac.uk/', target = '_blank'>Biological Records Centre</a>,",
-                    "supported by the <a class = 'about', href = 'http://www.ceh.ac.uk/', target = '_blank'>Centre for Ecology & Hydrology</a>",
-                    "and the <a class = 'about', href = 'http://jncc.defra.gov.uk/', target = '_blank'>Joint Nature Conservation Committee</a>.",
-                    "This application is hosted by the <a class = 'about', href = 'http://www.ceh.ac.uk/our-science/science-areas/environmental-informatics', target = '_blank'>CEH’s Environment Informatics Programme</a>.")),
-        style = 'width: 98%; max-width: 300px; font-size: small; text-align: center; color: white; display: block; background-color: dimgray; margin-left: auto; margin-right: auto;'),
+                    " supported by the <a class = 'about', href = 'http://www.ceh.ac.uk/', target = '_blank'>Centre for Ecology & Hydrology</a>",
+                    ", <a class = 'about', href = 'http://butterfly-conservation.org/', target = '_blank'>Butterfly Conservation</a>",
+                    ", <a class = 'about', href = 'http://www.ukmoths.org.uk/', target = '_blank'>UKmoths</a>",
+                    ", and the <a class = 'about', href = 'http://jncc.defra.gov.uk/', target = '_blank'>Joint Nature Conservation Committee</a>.",
+                    " This application is hosted by the <a class = 'about', href = 'http://www.ceh.ac.uk/our-science/science-areas/environmental-informatics', target = '_blank'>CEH’s Environment Informatics Programme</a>.")),
+        style = 'width: 98%; max-width: 300px; font-size: small; text-align: center; color: white; display: block; background-color: dimgray; margin-top: 5px; margin-bottom: 5px; margin-left: auto; margin-right: auto; padding: 1px 1px 1px 1px;'),
+      p(HTML(paste("<a class = 'about', href = 'http://www.ukmoths.org.uk/use-of-images/', target = '_blank'>Images are the copyright of their owners</a>")),
+        style = 'width: 98%; max-width: 300px; font-size: small; text-align: center; color: white; display: block; background-color: dimgray; margin-top: 5px; margin-bottom: 5px; margin-left: auto; margin-right: auto; padding: 1px 1px 1px 1px;'),
       a(href = 'http://www.brc.ac.uk/',
         target = '_blank',
         img(src = 'BRClogo.png', style = 'width: 93%; max-width: 300px; display: block; margin-left: auto; margin-right: auto;'))),
