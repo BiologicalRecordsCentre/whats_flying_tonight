@@ -82,15 +82,15 @@ sfClusterApplyLB(sort(unique(recData$SQ_10)), fun = function(hec){
 
 sfStop()
 
-##########################
-# Create phenology plots #
-##########################
+##################################################
+# Create phenology plots and add missing species #
+##################################################
 
 # Get the data
-
+rm(list = ls())
 library(RODBC)
 if(exists("channel") == FALSE) channel = odbcConnect("BRC", uid = "tomaug", pwd = "DoHitDedKu")
-get_weeks_query <- paste(readLines('data/NMRS/NMRS sp week counts.sql'), collapse = ' ')
+get_weeks_query <- paste(readLines('data/NMRS/NMRS sp week counts 2017.sql'), collapse = ' ')
 all_weeks_data <- sqlQuery(channel = channel, query = get_weeks_query)
 
 # save the data
@@ -106,7 +106,7 @@ library(ggplot2)
 library(RColorBrewer)
 library(grid)
 
-load(file = 'data/UKMoths/speciesData_newNames.rdata')
+load(file = 'data/UKMoths/speciesData_newNames2017.rdata')
 
 # reset phenology columns
 speciesDataRaw$phenosmall <- NA
@@ -118,6 +118,27 @@ for(n in seq_along(unique(speciesData$CONCEPT))){
   
   cat(i, '... ')
   
+  if(!i %in% speciesDataRaw$new_concept){
+    
+    new_name_data <- sqlQuery(channel = channel,
+                              query = paste0(
+                                "select * from brc.taxa_taxon_register where concept = '",
+                                i,
+                                "' AND valid = 'V'"))
+    temp <- speciesDataRaw[1,]
+    temp[,] <- NA
+    temp[,c('NAME', 'BINOMIAL', 'new_binomial')] <- as.character(new_name_data$BINOMIAL)
+    temp[,c('NAME_ENGLISH', 'new_englishname')] <- as.character(new_name_data$NAME_ENGLISH)
+    temp[,c('CONCEPT','new_concept')] <- as.character(i)
+    temp$URL <- 'http://ukmoths.org.uk'
+    temp$changed <- 'new'
+    temp$VALID <- 'V'
+    cat(' * NEW * ')
+    
+    speciesDataRaw <- rbind(speciesDataRaw, temp)
+    
+  }
+
   sp_name <- speciesDataRaw[speciesDataRaw$new_concept == i & !is.na(speciesDataRaw$new_concept), ]
   
   latinName <- as.character(sp_name$new_binomial)
@@ -126,20 +147,20 @@ for(n in seq_along(unique(speciesData$CONCEPT))){
     
   cat(valid, latinName, commonName)
   
-  #n_dist is number of distinct site date records
+  #n_recs is number of distinct site date records
   tempDat <- speciesData[speciesData$CONCEPT == i, ]
   
   if(nrow(tempDat) != 53){
-    tempDat <- rbind(tempDat[,c('CONCEPT', 'WEEKNO', 'N_DIST')],
+    tempDat <- rbind(tempDat[,c('CONCEPT', 'WEEKNO', 'N_RECS')],
                      data.frame(CONCEPT = i,
                                 WEEKNO = c(1:53)[!c(1:53) %in% tempDat$WEEKNO],
-                                N_DIST = 0))
+                                N_RECS = 0))
   }
   
   # Create a custom colour pallette for the calendar plots
   myPalette <- colorRampPalette(brewer.pal(9, 'YlOrBr'))
   
-  small_filename <- paste('www/phenology/',
+  small_filename <- paste('phenology/',
                           valid,
                           gsub(' ', '_', gsub('/', '_', latinName)),
                           '.png', sep = '')
@@ -150,7 +171,7 @@ for(n in seq_along(unique(speciesData$CONCEPT))){
   png(filename = small_filename,
       width = 235, height = 60, bg = "transparent")
   
-  p <- ggplot(tempDat, aes(x = WEEKNO, y = CONCEPT, fill = N_DIST)) +
+  p <- ggplot(tempDat, aes(x = WEEKNO, y = CONCEPT, fill = N_RECS)) +
     geom_tile() +
     scale_fill_gradientn(colours = myPalette(50)) +
     scale_x_continuous(expand = c(0, 0),
@@ -173,7 +194,7 @@ for(n in seq_along(unique(speciesData$CONCEPT))){
   
   dev.off()
   
-  big_filename <- paste('www/phenology/', 
+  big_filename <- paste('phenology/', 
                         valid,
                         gsub(' ', '_', gsub('/', '_', latinName)),
                         '_big.png', sep = '')
@@ -184,7 +205,7 @@ for(n in seq_along(unique(speciesData$CONCEPT))){
   png(filename = big_filename,
       width = 600, height = 120, bg = "transparent")
   
-  p <- ggplot(tempDat, aes(x = WEEKNO, y = CONCEPT, fill = N_DIST)) +
+  p <- ggplot(tempDat, aes(x = WEEKNO, y = CONCEPT, fill = N_RECS)) +
     geom_tile() +
     scale_fill_gradientn(colours = myPalette(50)) +
     scale_x_continuous(expand = c(0, 0),
@@ -212,7 +233,7 @@ for(n in seq_along(unique(speciesData$CONCEPT))){
 }
 
 # Save out the new species names table
-unique(speciesData$CONCEPT[!speciesData$CONCEPT %in% speciesDataRaw$new_concept])
+# unique(speciesData$CONCEPT[!speciesData$CONCEPT %in% speciesDataRaw$new_concept])
+# x <- speciesDataRaw[!speciesDataRaw$new_concept %in% unique(speciesData$CONCEPT),]
 
-x<-speciesDataRaw[speciesDataRaw$new_concept %in% unique(speciesData$CONCEPT),]
-save(speciesDataRaw, file = 'data/UKMoths/speciesData_newNames2.rdata')
+save(speciesDataRaw, file = 'data/UKMoths/speciesData_newNames2017.rdata')

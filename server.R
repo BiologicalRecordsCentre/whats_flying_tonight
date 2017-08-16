@@ -28,7 +28,7 @@ image_information <- read.csv(file = 'data/UKMoths/images/Images_requested_with_
 #                           )
 # save(speciesDataRaw, file = 'data/UKMoths/speciesData.rdata')
 
-load('data/UKMoths/speciesData.rdata')
+load('data/UKMoths/speciesData_newNames2017.rdata')
 
 shinyServer(function(input, output) {
   
@@ -84,12 +84,11 @@ shinyServer(function(input, output) {
         return(NULL)
       } else {
         speciesData <- merge(x = recData, y = speciesDataRaw,
-                             by.x = 'species', by.y = 'CONCEPT',
+                             by.x = 'species', by.y = 'new_concept',
                              all.x = TRUE, all.y = FALSE, sort = FALSE)
       }
     }
   }) 
-  
   
   # Sort the data
   speciesData <- reactive({
@@ -97,9 +96,9 @@ shinyServer(function(input, output) {
     if(input$sortBy == 'records'){
       return(speciesData_raw())
     } else if(input$sortBy == 'english'){
-      return(speciesData_raw()[order(speciesData_raw()$NAME_ENGLISH), ])
+      return(speciesData_raw()[order(speciesData_raw()$new_englishname), ])
     } else if(input$sortBy == 'latin'){
-      return(speciesData_raw()[order(speciesData_raw()$NAME), ])
+      return(speciesData_raw()[order(speciesData_raw()$new_binomial), ])
     }
     
   })
@@ -156,12 +155,10 @@ shinyServer(function(input, output) {
           # Create species gallery links
           galleryLinks <- list()
           
-          sp_name <- gsub(' ', '_', speciesData[i, 'NAME'])
+          sp_name <- gsub('.', '', gsub('/', '', gsub(' ', '_', speciesData[i, 'NAME'])), fixed = TRUE)
           images_dir <- 'www/images/species'
           species_dir <- file.path(images_dir, sp_name)
           thumb_dir <- file.path(images_dir, sp_name, 'thumbnail')
-          
-          
           
           if(dir.exists(species_dir)){ 
             # there is a folder for this species
@@ -174,9 +171,9 @@ shinyServer(function(input, output) {
               thumb_credit <- image_information$CONTRIBUTOR[image_information$FILENAME == thumb_big]
               
               gal_temp <-  tags$a(href = gsub('^www/', '', file.path(thumb_dir, thumb_big)),
-                                  'data-lightbox' = speciesData[i,'NAME'],
-                                  'data-title' = paste(speciesData[i,'NAME_ENGLISH'],
-                                                       speciesData[i,'NAME'],
+                                  'data-lightbox' = speciesData[i,'new_binomial'],
+                                  'data-title' = paste(speciesData[i,'new_englishname'],
+                                                       speciesData[i,'new_binomial'],
                                                        paste('Credit: ', thumb_credit[1]),
                                                        sep = ' - '),
                                   style = 'width: 100%',
@@ -195,9 +192,9 @@ shinyServer(function(input, output) {
                   im_credit <- image_information$CONTRIBUTOR[image_information$FILENAME == j]
                   
                   gal_temp <- tags$a(href = gsub('^www/', '', file.path(species_dir, j)),
-                                     'data-lightbox' = speciesData[i, 'NAME'],
-                                     'data-title' = paste(speciesData[i, 'NAME_ENGLISH'],
-                                                          speciesData[i, 'NAME'],
+                                     'data-lightbox' = speciesData[i, 'new_binomial'],
+                                     'data-title' = paste(speciesData[i, 'new_englishname'],
+                                                          speciesData[i, 'new_binomial'],
                                                           paste('Credit: ', im_credit[1]),
                                                           sep = ' - '))
                   galleryLinks <- append(galleryLinks, list(gal_temp))
@@ -211,9 +208,9 @@ shinyServer(function(input, output) {
               thumb_big <- 'images/no_image.gif'
               
               gal_temp <-  tags$a(href = thumb_big,
-                                  'data-lightbox' = speciesData[i, 'NAME'],
-                                  'data-title' = paste(speciesData[i,'NAME_ENGLISH'],
-                                                       speciesData[i,'NAME'],
+                                  'data-lightbox' = speciesData[i, 'new_binomial'],
+                                  'data-title' = paste(speciesData[i,'new_englishname'],
+                                                       speciesData[i,'new_binomial'],
                                                        'No image available', sep = ' - '),
                                   img(src = thumb_small,
                                       tabindex = 1,
@@ -231,9 +228,9 @@ shinyServer(function(input, output) {
             thumb_big <- 'images/no_image.gif'
             
             gal_temp <-  tags$a(href = thumb_big,
-                                'data-lightbox' = speciesData[i, 'NAME'],
-                                'data-title' = paste(speciesData[i,'NAME_ENGLISH'],
-                                                     speciesData[i,'NAME'],
+                                'data-lightbox' = speciesData[i, 'new_binomial'],
+                                'data-title' = paste(speciesData[i,'new_englishname'],
+                                                     speciesData[i,'new_binomial'],
                                                      ' - No image available'),
                                 img(src = thumb_small,
                                     tabindex = 1,
@@ -258,8 +255,8 @@ shinyServer(function(input, output) {
                                tags$div(id = 'text',
                                     p(a(href = speciesData[i, 'URL'],
                                       target = '_blank',
-                                      strong(speciesData[i,'NAME_ENGLISH'])),
-                                      em(paste0('(', speciesData[i,'NAME'], ')')),
+                                      strong(speciesData[i,'new_englishname'])),
+                                      em(paste0('(', speciesData[i,'new_binomial'], ')')),
                                       style = 'margin: 0px 0 0px;'),
                                     tags$span(paste(speciesData[i,'nrec'],
                                                     'records')
@@ -269,16 +266,16 @@ shinyServer(function(input, output) {
                                     a(href = big_phenology,
                                       'data-lightbox' = big_phenology,
                                       'data-title' = paste('Phenology:',
-                                                           speciesData[i,'NAME_ENGLISH'],
-                                                           speciesData[i,'NAME'],
+                                                           speciesData[i,'new_englishname'],
+                                                           speciesData[i,'new_binomial'],
                                                            sep = ' - '),
                                       img(src = small_phenology,
                                           align = 'middle',
                                           tabindex = 1,
                                           width = '100%',
                                           alt = paste('Phenology:',
-                                                      speciesData[i,'NAME_ENGLISH'],
-                                                      speciesData[i,'NAME'],
+                                                      speciesData[i,'new_englishname'],
+                                                      speciesData[i,'new_binomial'],
                                                       sep = ' - ')))
                            )
           )
