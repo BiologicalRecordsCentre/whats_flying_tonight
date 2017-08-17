@@ -32,6 +32,7 @@ shinyUI(fluidPage(
     includeCSS("styles.css"),
     includeCSS("lightbox.css"),
     includeCSS('addtohomescreen.css'),
+    includeScript("google_analytics.js"),
     includeScript("jquery-2.1.4.js"),
     includeScript(path = 'www/location.js'),
     includeScript(path = 'www/addtohomescreen.js'),
@@ -42,15 +43,16 @@ shinyUI(fluidPage(
 
   # Loading text
   div(id = 'loading',
+      h1('BETA'),
       h3('Loading...'),
       p("Using your location and today's date to build your custom report"),
       img(src = 'images/startup.gif', alt = 'loading', style = 'margin-top: 20px')),
   # No gelocation text
   hidden(h5(id = 'geolocation_denied',
             align = 'center',
-            paste0("You have denied access to your location.",
-                   "To allow access clear your cache for this page", 
-                   "and then select 'allow' when prompted"))
+            paste("You have denied access to your location.",
+                  "To allow access clear your cache for this page", 
+                  "and then select 'allow' when prompted"))
   ),
   htmlOutput('UI'),
   div(id = 'bottom-box'),

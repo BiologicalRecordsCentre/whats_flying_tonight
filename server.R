@@ -132,7 +132,7 @@ shinyServer(function(input, output) {
       # Add location div at the top
       hec_div <- tags$div(id = 'tet_top',
                           align = 'center',
-                          tags$div(span('Showing larger moths likly to be flying in',
+                          tags$div(span('Showing larger moths likely to be flying in',
                                          a(hectad(), href = paste('http://www.bnhs.co.uk/focuson/grabagridref/html/index.htm?gr=',
                                                                   hectad(),
                                                                   '&en100=false&en1000=false&en2000=false',
