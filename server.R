@@ -5,11 +5,15 @@
 #
 library(shiny)
 library(shinyjs)
+library(sp)
 
 print(Sys.time())
 
 source_scripts <- list.files('scripts/internal/', full.names = TRUE)
 for(i in source_scripts) source(i)
+
+# GBR <- raster::getData(country = 'GBR', level = 1)
+GBR <- readRDS('data/country_polygons/GBR.rds')
 
 # # load datasets
 # speciesDataRaw <- read.csv('data/UKMoths/spDatImages.csv', stringsAsFactors = FALSE)
@@ -33,12 +37,28 @@ image_information <- read.csv(file = 'data/UKMoths/images/Images_requested_with_
 load('data/UKMoths/speciesData_newNames2017.rdata')
 
 shinyServer(function(input, output) {
-  
+
   # Get hectad using location
   hectad_loc <- reactive({
     if(!is.null(input$lat)){
-      gr <- gps_latlon2gr(latitude = input$lat, longitude = input$long)
-      hectad <- reformat_gr(gr$GRIDREF, prec_out = 10000)
+      # lat <- 54.592104
+      # long <- -5.967430#ni
+      # long <- -1.967430#uk
+      # long <- -150.967430#notuk
+      
+      my_point <- SpatialPoints(coords = data.frame(input$long, input$lat),
+                                proj4string = CRS(proj4string(obj = GBR)))
+      country <- over(my_point, GBR)$NAME_1
+      
+      if(identical(country, 'Northern Ireland')){ # NI
+        gr <- gps_latlon2gr(latitude = input$lat, longitude = input$long, out_projection = 'OSNI')
+        return(reformat_gr(gr$GRIDREF, prec_out = 10000))
+      } else if(is.na(country)){ # Outside UK
+        return('notuk')
+      } else { # GB
+        gr <- gps_latlon2gr(latitude = input$lat, longitude = input$long, out_projection = 'OSGB')
+        return(reformat_gr(gr$GRIDREF, prec_out = 10000))
+      }
     }
   }) 
   
@@ -73,6 +93,10 @@ shinyServer(function(input, output) {
   speciesData_raw <- reactive({
     if(!is.null(input$lat)){
       
+      cat(paste('\nHectad:', hectad(), '\n'))
+      
+      if(identical(hectad(), 'notuk')) return(hectad())
+      
       # Set date
       if(!input$use_date){
         
@@ -103,6 +127,8 @@ shinyServer(function(input, output) {
   
   # Sort the data
   speciesData <- reactive({
+    
+    if(identical(speciesData_raw(), 'notuk')) return(speciesData_raw())
     
     if(input$sortBy == 'records'){
       return(speciesData_raw())
@@ -140,37 +166,39 @@ shinyServer(function(input, output) {
       
       speciesData <- speciesData()
       
-      # Add location div at the top
-      hec_div <- tags$div(id = 'tet_top',
-                          align = 'center',
-                          tags$div(span('Showing larger moths likely to be flying in',
-                                         a(hectad(), href = paste('http://www.bnhs.co.uk/focuson/grabagridref/html/index.htm?gr=',
-                                                                  hectad(),
-                                                                  '&en100=false&en1000=false&en2000=false',
-                                                                  sep = ''),
-                                         target = '_blank'),
-                                         'tonight')
-                                   )
-                          )
+      cat(str(speciesData))
       
-      html <- append(html, list(hec_div))
+      if(identical(speciesData, 'notuk')){ 
+        # if na there no hectad data files for their locations
+        # or the surrounding area, tell them they need to be
+        # in the UK
+        temp_html <- tags$div(id = 'notuk',
+                              align = 'center',
+                              tags$span('Sorry, you are currently outside the UK. Use settings to view data from another location')
+        )
         
-      # If data are present build the species panels
-      if(!is.null(speciesData)){
+        html <- list(temp_html)
         
-        if(identical(speciesData, NA)){ 
-          # if na there no hectad data files for their locations
-          # or the surrounding area, tell them they need to be
-          # in the UK
-          temp_html <- tags$div(id = 'notuk',
-                                align = 'center',
-                                tags$span('Sorry, you are currently outside the UK. Use settings to view data from another location')
+      } else {
+      
+        # If data are present build the species panels
+        if(!is.null(speciesData)){
+          
+          # Add location div at the top
+          hec_div <- tags$div(id = 'tet_top',
+                              align = 'center',
+                              tags$div(span('Showing larger moths likely to be flying in',
+                                            a(hectad(), href = paste('http://www.bnhs.co.uk/focuson/grabagridref/html/index.htm?gr=',
+                                                                     hectad(),
+                                                                     '&en100=false&en1000=false&en2000=false',
+                                                                     sep = ''),
+                                              target = '_blank'),
+                                            'tonight')
+                              )
           )
           
-          html <- list(temp_html)
+          html <- append(html, list(hec_div))
           
-        } else {
-        
           for(i in 1:n_to_show()){
             
             big_phenology <- speciesData[i, 'phenobig']
@@ -321,20 +349,17 @@ shinyServer(function(input, output) {
               html <- append(html, list(show_n_html))
               
             }
-              
           } # end of species loop
-        
+        } else { # No data available
+          
+          temp_html <- tags$div(id = 'nodata',
+                                align = 'center',
+                                tags$span('There are no records of moths in this area at this time of year')
+                                )
+          
+          html <- list(temp_html)
+          
         }
-        
-      } else { # No data available
-        
-        temp_html <- tags$div(id = 'nodata',
-                              align = 'center',
-                              tags$span('There are no records of moths in this area at this time of year')
-                              )
-        
-        html <- list(temp_html)
-        
       }
 
       tagList(html)
