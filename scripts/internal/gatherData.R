@@ -21,10 +21,17 @@ gatherData <- function(hectad, jDay, radius = 1, dayBuffer = 4){
       load(file.path('data/hectad_counts', paste(x, '.rdata', sep = '')))
      
       return(temp_dat)
+      
+    } else {
+      
+      return(NULL)
+      
     }
   })
   
   combo <- do.call(rbind, data1)
+  
+  if(is.null(combo)) return(NA)
 
   ## Subset to day range
   dRange <- (jDay - dayBuffer):(jDay + dayBuffer)

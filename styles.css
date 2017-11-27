@@ -266,3 +266,11 @@ a.about:active {
     font-size: x-large;
     margin: 10% auto;
 }
+
+#notuk {
+    width: 290px;
+    background: black;
+    color: white;
+    font-size: x-large;
+    margin: 10% auto;
+}

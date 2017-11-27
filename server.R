@@ -6,6 +6,8 @@
 library(shiny)
 library(shinyjs)
 
+print(Sys.time())
+
 source_scripts <- list.files('scripts/internal/', full.names = TRUE)
 for(i in source_scripts) source(i)
 
@@ -39,7 +41,14 @@ shinyServer(function(input, output) {
       hectad <- reformat_gr(gr$GRIDREF, prec_out = 10000)
     }
   }) 
-
+  
+  observe({
+    if(!is.null(input$lat)){
+      cat(paste('lat:', input$lat))
+      cat(paste('\nlong:', input$long))
+    }
+  })
+  
   # Select hectad to use
   hectad <- reactive({
     if(!is.null(input$lat) & !input$use_man){
@@ -80,7 +89,9 @@ shinyServer(function(input, output) {
                             radius = 1,
                             dayBuffer = 4)
       
-      if(nrow(recData) == 0){
+      if(identical(recData, NA)){
+        return(NA)
+      } else if(nrow(recData) == 0){
         return(NULL)
       } else {
         speciesData <- merge(x = recData, y = speciesDataRaw,
@@ -147,62 +158,95 @@ shinyServer(function(input, output) {
       # If data are present build the species panels
       if(!is.null(speciesData)){
         
-        for(i in 1:n_to_show()){
+        if(identical(speciesData, NA)){ 
+          # if na there no hectad data files for their locations
+          # or the surrounding area, tell them they need to be
+          # in the UK
+          temp_html <- tags$div(id = 'notuk',
+                                align = 'center',
+                                tags$span('Sorry, you are currently outside the UK. Use settings to view data from another location')
+          )
           
-          big_phenology <- speciesData[i, 'phenobig']
-          small_phenology <- speciesData[i, 'phenosmall']
+          html <- list(temp_html)
           
-          # Create species gallery links
-          galleryLinks <- list()
-          
-          sp_name <- gsub('.', '', gsub('/', '', gsub(' ', '_', speciesData[i, 'NAME'])), fixed = TRUE)
-          images_dir <- 'www/images/species'
-          species_dir <- file.path(images_dir, sp_name)
-          thumb_dir <- file.path(images_dir, sp_name, 'thumbnail')
-          
-          if(dir.exists(species_dir)){ 
-            # there is a folder for this species
-            if(dir.exists(thumb_dir)){
-              # thumbnail dir exists
-              # add thumbnail
-              thumb_images <- list.files(thumb_dir, pattern = 'jpg$')
-              thumb_small <- thumb_images[grep('^thumbnail_', thumb_images)][1]
-              thumb_big <- thumb_images[grep('^thumbnail_', thumb_images, invert = TRUE)][1]
-              thumb_credit <- image_information$CONTRIBUTOR[image_information$FILENAME == thumb_big]
-              
-              gal_temp <-  tags$a(href = gsub('^www/', '', file.path(thumb_dir, thumb_big)),
-                                  'data-lightbox' = speciesData[i,'new_binomial'],
-                                  'data-title' = paste(speciesData[i,'new_englishname'],
-                                                       speciesData[i,'new_binomial'],
-                                                       paste('Credit: ', thumb_credit[1]),
-                                                       sep = ' - '),
-                                  style = 'width: 100%',
-                                  div(style = paste("background: url('",
-                                                    gsub('^www/', '', file.path(thumb_dir, thumb_small)),
-                                                    "') no-repeat center center; width: 100%; height: 124px;", sep = ''))
-                                  )
-              
-              galleryLinks <- append(galleryLinks, list(gal_temp))
-              
-              # Then add the rest of the gallery
-              if(length(list.files(species_dir, pattern = 'jpg$')) > 0 ){
-                # If there are gallery images
-                for(j in list.files(species_dir, pattern = 'jpg$')){
-                  
-                  im_credit <- image_information$CONTRIBUTOR[image_information$FILENAME == j]
-                  
-                  gal_temp <- tags$a(href = gsub('^www/', '', file.path(species_dir, j)),
-                                     'data-lightbox' = speciesData[i, 'new_binomial'],
-                                     'data-title' = paste(speciesData[i, 'new_englishname'],
-                                                          speciesData[i, 'new_binomial'],
-                                                          paste('Credit: ', im_credit[1]),
-                                                          sep = ' - '))
-                  galleryLinks <- append(galleryLinks, list(gal_temp))
-                  
+        } else {
+        
+          for(i in 1:n_to_show()){
+            
+            big_phenology <- speciesData[i, 'phenobig']
+            small_phenology <- speciesData[i, 'phenosmall']
+            
+            # Create species gallery links
+            galleryLinks <- list()
+            
+            sp_name <- gsub('.', '', gsub('/', '', gsub(' ', '_', speciesData[i, 'NAME'])), fixed = TRUE)
+            images_dir <- 'www/images/species'
+            species_dir <- file.path(images_dir, sp_name)
+            thumb_dir <- file.path(images_dir, sp_name, 'thumbnail')
+            
+            if(dir.exists(species_dir)){ 
+              # there is a folder for this species
+              if(dir.exists(thumb_dir)){
+                # thumbnail dir exists
+                # add thumbnail
+                thumb_images <- list.files(thumb_dir, pattern = 'jpg$')
+                thumb_small <- thumb_images[grep('^thumbnail_', thumb_images)][1]
+                thumb_big <- thumb_images[grep('^thumbnail_', thumb_images, invert = TRUE)][1]
+                thumb_credit <- image_information$CONTRIBUTOR[image_information$FILENAME == thumb_big]
+                
+                gal_temp <-  tags$a(href = gsub('^www/', '', file.path(thumb_dir, thumb_big)),
+                                    'data-lightbox' = speciesData[i,'new_binomial'],
+                                    'data-title' = paste(speciesData[i,'new_englishname'],
+                                                         speciesData[i,'new_binomial'],
+                                                         paste('Credit: ', thumb_credit[1]),
+                                                         sep = ' - '),
+                                    style = 'width: 100%',
+                                    div(style = paste("background: url('",
+                                                      gsub('^www/', '', file.path(thumb_dir, thumb_small)),
+                                                      "') no-repeat center center; width: 100%; height: 124px;", sep = ''))
+                                    )
+                
+                galleryLinks <- append(galleryLinks, list(gal_temp))
+                
+                # Then add the rest of the gallery
+                if(length(list.files(species_dir, pattern = 'jpg$')) > 0 ){
+                  # If there are gallery images
+                  for(j in list.files(species_dir, pattern = 'jpg$')){
+                    
+                    im_credit <- image_information$CONTRIBUTOR[image_information$FILENAME == j]
+                    
+                    gal_temp <- tags$a(href = gsub('^www/', '', file.path(species_dir, j)),
+                                       'data-lightbox' = speciesData[i, 'new_binomial'],
+                                       'data-title' = paste(speciesData[i, 'new_englishname'],
+                                                            speciesData[i, 'new_binomial'],
+                                                            paste('Credit: ', im_credit[1]),
+                                                            sep = ' - '))
+                    galleryLinks <- append(galleryLinks, list(gal_temp))
+                    
+                  }
                 }
+              } else {
+                # If no thumbnail exists
+                # use 'no image'
+                thumb_small <- 'images/no_image_thumb.gif'
+                thumb_big <- 'images/no_image.gif'
+                
+                gal_temp <-  tags$a(href = thumb_big,
+                                    'data-lightbox' = speciesData[i, 'new_binomial'],
+                                    'data-title' = paste(speciesData[i,'new_englishname'],
+                                                         speciesData[i,'new_binomial'],
+                                                         'No image available', sep = ' - '),
+                                    img(src = thumb_small,
+                                        tabindex = 1,
+                                        align = 'middle',
+                                        height = '100%',
+                                        alt = 'No species'))
+                galleryLinks <- append(galleryLinks, list(gal_temp))
+                
               }
+              
             } else {
-              # If no thumbnail exists
+              # there is no image folder for this species
               # use 'no image'
               thumb_small <- 'images/no_image_thumb.gif'
               thumb_big <- 'images/no_image.gif'
@@ -211,94 +255,76 @@ shinyServer(function(input, output) {
                                   'data-lightbox' = speciesData[i, 'new_binomial'],
                                   'data-title' = paste(speciesData[i,'new_englishname'],
                                                        speciesData[i,'new_binomial'],
-                                                       'No image available', sep = ' - '),
+                                                       ' - No image available'),
                                   img(src = thumb_small,
                                       tabindex = 1,
                                       align = 'middle',
                                       height = '100%',
                                       alt = 'No species'))
               galleryLinks <- append(galleryLinks, list(gal_temp))
-              
             }
-            
-          } else {
-            # there is no image folder for this species
-            # use 'no image'
-            thumb_small <- 'images/no_image_thumb.gif'
-            thumb_big <- 'images/no_image.gif'
-            
-            gal_temp <-  tags$a(href = thumb_big,
-                                'data-lightbox' = speciesData[i, 'new_binomial'],
-                                'data-title' = paste(speciesData[i,'new_englishname'],
-                                                     speciesData[i,'new_binomial'],
-                                                     ' - No image available'),
-                                img(src = thumb_small,
-                                    tabindex = 1,
-                                    align = 'middle',
-                                    height = '100%',
-                                    alt = 'No species'))
-            galleryLinks <- append(galleryLinks, list(gal_temp))
-          }
-
-          gallery <- tagList(galleryLinks)
-          
-          # Create the species div
-          temp_html <- tags$div(id = 'species',
-                                align = 'center',
-                           
-                               ## left image
-                               tags$div(id = 'image',
-                                        HTML(as.character(htmltools::renderTags(gallery)$html))
-                               ),
-                           
-                               ## Right text
-                               tags$div(id = 'text',
-                                    p(a(href = speciesData[i, 'URL'],
-                                      target = '_blank',
-                                      strong(speciesData[i,'new_englishname'])),
-                                      em(paste0('(', speciesData[i,'new_binomial'], ')')),
-                                      style = 'margin: 0px 0 0px;'),
-                                    tags$span(paste(speciesData[i,'nrec'],
-                                                    'records')
-                                              ),
-                                    br(),
-                                    ## Phenology plot
-                                    a(href = big_phenology,
-                                      'data-lightbox' = big_phenology,
-                                      'data-title' = paste('Phenology:',
-                                                           speciesData[i,'new_englishname'],
-                                                           speciesData[i,'new_binomial'],
-                                                           sep = ' - '),
-                                      img(src = small_phenology,
-                                          align = 'middle',
-                                          tabindex = 1,
-                                          width = '100%',
-                                          alt = paste('Phenology:',
-                                                      speciesData[i,'new_englishname'],
-                                                      speciesData[i,'new_binomial'],
-                                                      sep = ' - ')))
-                           )
-          )
-            
-          html <- append(html, list(temp_html))
-          
-          # If this the last species say what show length we are working with
-          if(i == n_to_show()){
+  
+            gallery <- tagList(galleryLinks)
             
             # Create the species div
-            show_n_html <- tags$div(id = 'show_n',
+            temp_html <- tags$div(id = 'species',
                                   align = 'center',
-                                  
-                                  ## left image
-                                  tags$div(id = 'show_length',
-                                           paste('Showing', input$NtoShow, '- this can be changed in settings')
-                                  ))
+                             
+                                 ## left image
+                                 tags$div(id = 'image',
+                                          HTML(as.character(htmltools::renderTags(gallery)$html))
+                                 ),
+                             
+                                 ## Right text
+                                 tags$div(id = 'text',
+                                      p(a(href = speciesData[i, 'URL'],
+                                        target = '_blank',
+                                        strong(speciesData[i,'new_englishname'])),
+                                        em(paste0('(', speciesData[i,'new_binomial'], ')')),
+                                        style = 'margin: 0px 0 0px;'),
+                                      tags$span(paste(speciesData[i,'nrec'],
+                                                      'records')
+                                                ),
+                                      br(),
+                                      ## Phenology plot
+                                      a(href = big_phenology,
+                                        'data-lightbox' = big_phenology,
+                                        'data-title' = paste('Phenology:',
+                                                             speciesData[i,'new_englishname'],
+                                                             speciesData[i,'new_binomial'],
+                                                             sep = ' - '),
+                                        img(src = small_phenology,
+                                            align = 'middle',
+                                            tabindex = 1,
+                                            width = '100%',
+                                            alt = paste('Phenology:',
+                                                        speciesData[i,'new_englishname'],
+                                                        speciesData[i,'new_binomial'],
+                                                        sep = ' - ')))
+                             )
+            )
+              
+            html <- append(html, list(temp_html))
             
-            html <- append(html, list(show_n_html))
-            
-          }
-            
-        } # end of species loop
+            # If this the last species say what show length we are working with
+            if(i == n_to_show()){
+              
+              # Create the species div
+              show_n_html <- tags$div(id = 'show_n',
+                                    align = 'center',
+                                    
+                                    ## left image
+                                    tags$div(id = 'show_length',
+                                             paste('Showing', input$NtoShow, '- this can be changed in settings')
+                                    ))
+              
+              html <- append(html, list(show_n_html))
+              
+            }
+              
+          } # end of species loop
+        
+        }
         
       } else { # No data available
         
