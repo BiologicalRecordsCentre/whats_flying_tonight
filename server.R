@@ -388,60 +388,60 @@ shinyServer(function(input, output) {
   # Settings button
   observeEvent(input$setting_button,
                 {
-                      show(id = 'settings_display', anim = TRUE,
-                           animType = 'fade', time = 0.2)
-                      show(id = 'settings_exit',  anim = TRUE,
-                           animType = 'fade', time = 0.2)
-                      hide(id = 'about_button', anim = TRUE,
-                           animType = 'fade', time = 0.2)
-                      hide(id = 'about_display', anim = TRUE,
-                           animType = 'fade', time = 0.2)
+                  shinyjs::show(id = 'settings_display', anim = TRUE,
+                                animType = 'fade', time = 0.2)
+                  shinyjs::show(id = 'settings_exit',  anim = TRUE,
+                                animType = 'fade', time = 0.2)
+                  shinyjs::hide(id = 'about_button', anim = TRUE,
+                                animType = 'fade', time = 0.2)
+                  shinyjs::hide(id = 'about_display', anim = TRUE,
+                                animType = 'fade', time = 0.2)
                 })
   
   # Settings close button
   observeEvent(input$settings_exit,
                 {
-                  hide(id = 'about_display', anim = TRUE,
+                  shinyjs::hide(id = 'about_display', anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  hide(id = 'settings_display', anim = TRUE,
+                  shinyjs::hide(id = 'settings_display', anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  hide(id = 'settings_exit',  anim = TRUE,
+                  shinyjs::hide(id = 'settings_exit',  anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  hide(id = 'about_exit',  anim = TRUE,
+                  shinyjs::hide(id = 'about_exit',  anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  show(id = 'about_button', anim = TRUE,
+                  shinyjs::show(id = 'about_button', anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  show(id = 'setting_button', anim = TRUE,
+                  shinyjs::show(id = 'setting_button', anim = TRUE,
                        animType = 'fade', time = 0.2)
                 })
   
   # About button
   observeEvent(input$about_button,
                 {
-                  hide(id = 'settings_display', anim = TRUE,
+                  shinyjs::hide(id = 'settings_display', anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  show(id = 'about_exit',  anim = TRUE,
+                  shinyjs::show(id = 'about_exit',  anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  show(id = 'about_display',  anim = TRUE,
+                  shinyjs::show(id = 'about_display',  anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  hide(id = 'setting_button', anim = TRUE,
+                  shinyjs::hide(id = 'setting_button', anim = TRUE,
                        animType = 'fade', time = 0.2)
                 })
   
   # # About close button
   observeEvent(input$about_exit,
                 {
-                  hide(id = 'about_display', anim = TRUE,
+                  shinyjs::hide(id = 'about_display', anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  hide(id = 'settings_display', anim = TRUE,
+                  shinyjs::hide(id = 'settings_display', anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  hide(id = 'settings_exit',  anim = TRUE,
+                  shinyjs::hide(id = 'settings_exit',  anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  hide(id = 'about_exit',  anim = TRUE,
+                  shinyjs::hide(id = 'about_exit',  anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  show(id = 'about_button', anim = TRUE,
+                  shinyjs::show(id = 'about_button', anim = TRUE,
                        animType = 'fade', time = 0.2)
-                  show(id = 'setting_button', anim = TRUE,
+                  shinyjs::show(id = 'setting_button', anim = TRUE,
                        animType = 'fade', time = 0.2)
                 })
 
