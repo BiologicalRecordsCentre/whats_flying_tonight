@@ -128,16 +128,23 @@ shinyServer(function(input, output) {
   # Sort the data
   speciesData <- reactive({
     
-    if(identical(speciesData_raw(), 'notuk')) return(speciesData_raw())
-    
-    if(input$sortBy == 'records'){
+    if(any(identical(speciesData_raw(), 'notuk'),
+           identical(speciesData_raw(), NA),
+           is.null(speciesData_raw()))){
       return(speciesData_raw())
-    } else if(input$sortBy == 'english'){
-      return(speciesData_raw()[order(speciesData_raw()$new_englishname), ])
-    } else if(input$sortBy == 'latin'){
-      return(speciesData_raw()[order(speciesData_raw()$new_binomial), ])
     }
     
+    if(nrow(speciesData_raw()) != 0){
+      if(input$sortBy == 'records'){
+        return(speciesData_raw())
+      } else if(input$sortBy == 'english'){
+        return(speciesData_raw()[order(speciesData_raw()$new_englishname), ])
+      } else if(input$sortBy == 'latin'){
+        return(speciesData_raw()[order(speciesData_raw()$new_binomial), ])
+      }
+    } else {
+      return(speciesData_raw())
+    }
   })
   
   # how many species to show
