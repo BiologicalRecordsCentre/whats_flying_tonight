@@ -104,7 +104,11 @@ shinyServer(function(input, output) {
         
       } else if(input$use_date){
         
-        jDay <- as.POSIXlt(input$date_man)$yday
+        man_date <- as.Date(paste(input$day_man,
+                                  input$month_man),
+                            format = '%d %b')
+        
+        jDay <- as.POSIXlt(man_date)$yday
         
       }
       
@@ -380,6 +384,18 @@ shinyServer(function(input, output) {
     
   })
   
+  # output species divs
+  output$day_selector <- renderUI({
+    # tagList(
+      selectInput('day_man',
+                  label = NULL,
+                  selected = as.numeric(format(Sys.Date(), '%d')),
+                  1:monthsdays(input$month_man),
+                  selectize = TRUE,
+                  multiple = FALSE, width = '60px')    
+    # )
+  })
+  
   # Loading div
   observe({
     if(!is.null(divList())){
@@ -391,6 +407,8 @@ shinyServer(function(input, output) {
   ###############################
   ## Settings and About boxes ###
   ###############################
+  
+  outputOptions(output, 'day_selector', suspendWhenHidden=FALSE)
   
   # Settings button
   observeEvent(input$setting_button,
