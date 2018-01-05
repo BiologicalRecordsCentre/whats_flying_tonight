@@ -89,6 +89,22 @@ shinyServer(function(input, output) {
     } 
   })
   
+  dayMonth <- reactive({
+    if(!input$use_date){
+      format(Sys.time(), '%d-%b')
+    } else if(input$use_date){
+      paste(input$day_man,
+            input$month_man,
+            sep = '-')
+    }
+    
+    
+  })
+  
+  jDay <- reactive({
+    as.POSIXlt(as.Date(dayMonth(), '%d-%b'))$yday
+  })
+  
   # Gather the data
   speciesData_raw <- reactive({
     if(!is.null(input$lat)){
@@ -97,23 +113,8 @@ shinyServer(function(input, output) {
       
       if(identical(hectad(), 'notuk')) return(hectad())
       
-      # Set date
-      if(!input$use_date){
-        
-        jDay <- as.POSIXlt(Sys.time())$yday
-        
-      } else if(input$use_date){
-        
-        man_date <- as.Date(paste(input$day_man,
-                                  input$month_man),
-                            format = '%d %b')
-        
-        jDay <- as.POSIXlt(man_date)$yday
-        
-      }
-      
       recData <- gatherData(hectad = hectad(),
-                            jDay = jDay,
+                            jDay = jDay(),
                             radius = 1,
                             dayBuffer = 4)
       
@@ -204,7 +205,7 @@ shinyServer(function(input, output) {
                                                                      '&en100=false&en1000=false&en2000=false',
                                                                      sep = ''),
                                               target = '_blank'),
-                                            'tonight')
+                                            'on', dayMonth())
                               )
           )
           
