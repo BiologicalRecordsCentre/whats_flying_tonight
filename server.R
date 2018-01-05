@@ -318,7 +318,7 @@ shinyServer(function(input, output) {
                                         em(paste0('(', speciesData[i,'new_binomial'], ')')),
                                         style = 'margin: 0px 0 0px;'),
                                       tags$span(paste(speciesData[i,'nrec'],
-                                                      'records')
+                                                      ifelse(speciesData[i,'nrec'] > 1, 'records', 'record'))
                                                 ),
                                       br(),
                                       ## Phenology plot
