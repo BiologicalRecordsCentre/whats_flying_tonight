@@ -1,5 +1,5 @@
 body {
-  background-color: #FFFFEB;
+  background-color: #000000;
 }
 
 /* unvisited link */
@@ -41,6 +41,7 @@ a.about:active {
   height: 200px;
   width: 250px;
   position: fixed;
+  color: white;
   top: 50%;
   left: 50%;
   margin-left: -125px;
@@ -54,10 +55,10 @@ a.about:active {
   margin: 3px 3px 3px 3px;
   float: left;
   overflow: hidden;
-  background-color:#eae9d4; /*frame colour*/
+  background-color:#ffffff; /*frame colour*/
   /*and give the corners a small curve*/
   border-radius: 4px;
-  border-color: grey;
+  border-color: #f5f5f5;
   border-style: solid;
   border-width: thin;
 }
@@ -69,10 +70,10 @@ a.about:active {
   margin: 3px 3px 40px 3px;
   float: left;
   overflow: hidden;
-  background-color:#eae9d4; /*frame colour*/
+  background-color: white; /*frame colour*/
   /*and give the corners a small curve*/
   border-radius: 4px;
-  border-color: grey;
+  border-color: #f5f5f5;
   border-style: solid;
   border-width: thin;
 }
@@ -83,10 +84,10 @@ a.about:active {
   margin: 3px 3px 3px 3px;
   float: left;
   overflow: hidden;
-  background-color:#eae9d4; /*frame colour*/
+  background-color:#ffffff; /*frame colour*/
   /*and give the corners a small curve*/
   border-radius: 4px;
-  border-color: grey;
+  border-color: #f5f5f5;
   border-style: solid;
   border-width: thin;
 }
@@ -119,8 +120,7 @@ a.about:active {
     bottom: 0px;
     right: 0px;
     left: 0px;
-    background: black;
-    color: white;
+    background: #0000008c;
     height: 46px;
 }
 
