@@ -98,7 +98,7 @@ shinyUI(fluidPage(
                   c('All', 'Top 10', 'Top 25', 'Top 50', 'Top 100'),
                   selectize = FALSE,
                   multiple = FALSE,
-                  selected = 'Top 25')
+                  selected = 'Top 50')
       ),
   div(id = 'about_display',
       a(href = 'http://butterfly-conservation.org/',
