@@ -6,6 +6,9 @@
 library(shiny)
 library(shinyjs)
 library(sp)
+library(RCurl)
+library(RJSONIO)
+library(plyr)
 
 print(Sys.time())
 
@@ -36,7 +39,7 @@ image_information <- read.csv(file = 'data/UKMoths/images/Images_requested_with_
 
 load('data/UKMoths/speciesData_newNames2017.rdata')
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
   # Get hectad using location
   hectad_loc <- reactive({
@@ -69,12 +72,65 @@ shinyServer(function(input, output) {
     }
   })
   
+  # read in the google location when the button is pressed
+  location_man <- eventReactive(input$submit, {
+    return(input$location_man)
+  })
+  
+  GCode <- reactive ({
+    textLocation <- location_man()
+    cat('\n', textLocation, '\n')
+    str(textLocation)
+    GCode <- geoCode(as.character(textLocation))
+    return(GCode)
+  })
+  
+  output$googlelocation <- renderText({
+    cat('\n', GCode()[4], '\n')
+    if(is.na(GCode()[4])){
+      return('Location unknown')
+    } else {
+      return(GCode()[4])
+    }
+  })
+
   # Select hectad to use
   hectad <- reactive({
-    if(!is.null(input$lat) & !input$use_man){
+    if(!is.null(input$lat) & input$submit == 0){
       hectad_loc()
-    } else if(input$use_man){
-      input$hectad_man
+    } else if(location_man() != ''){
+      
+      GCode <- GCode()
+      
+      if(any(is.na(GCode[1:2]))){ # error message like no data
+        
+        return(NULL)
+        
+      }
+      
+      lat <- as.numeric(GCode[1])
+      long <- as.numeric(GCode[2])
+      
+      cat(lat,long) # without this cat the next line fails
+      # I HAVE NO IDEA WHY!
+      
+      my_point <- SpatialPoints(coords = data.frame(long, lat),
+                                proj4string = CRS(proj4string(obj = GBR)))
+      country <- over(my_point, GBR)$NAME_1
+      
+      if(identical(country, 'Northern Ireland')){ # NI
+        gr <- gps_latlon2gr(latitude = lat, longitude = long, out_projection = 'OSNI')
+        return(reformat_gr(gr$GRIDREF, prec_out = 10000))
+      } else if(is.na(country)){ # Outside UK
+        return('notuk')
+      } else { # GB
+        gr <- gps_latlon2gr(latitude = lat, longitude = long, out_projection = 'OSGB')
+        return(reformat_gr(gr$GRIDREF, prec_out = 10000))
+      }
+      
+      # input$hectad_man
+    } else {
+      return(NULL)
     }
   })
   
@@ -107,7 +163,7 @@ shinyServer(function(input, output) {
   
   # Gather the data
   speciesData_raw <- reactive({
-    if(!is.null(input$lat)){
+    if(!is.null(input$lat) & !is.null(hectad())){
       
       cat(paste('\nHectad:', hectad(), '\n'))
       
@@ -316,7 +372,7 @@ shinyServer(function(input, output) {
                                  ),
                              
                                  ## Right text
-                                 tags$div(id = 'text',
+                                 tags$div(id = 'speciestext',
                                       p(a(href = speciesData[i, 'URL'],
                                         target = '_blank',
                                         strong(speciesData[i,'new_englishname'])),
@@ -364,10 +420,18 @@ shinyServer(function(input, output) {
           } # end of species loop
         } else { # No data available
           
-          temp_html <- tags$div(id = 'nodata',
-                                align = 'center',
-                                tags$span('There are no records of moths in this area at this time of year')
-                                )
+          if(is.null(hectad())){
+            temp_html <- tags$div(id = 'nodata',
+                                  align = 'center',
+                                  tags$span('Unknown location: please choose a new location in the settings menu')
+            )
+          } else{
+            temp_html <- tags$div(id = 'nodata',
+                                  align = 'center',
+                                  tags$span('There are no records of moths in this area at this time of year')
+                                  )
+          }
+          
           
           html <- list(temp_html)
           

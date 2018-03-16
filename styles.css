@@ -37,6 +37,16 @@ a.about:active {
     margin-left: 10px;
 }
 
+.form-group{
+  margin-bottom: 3px;
+}
+
+#googlelocation{
+  color: white;
+  max-width: 100%;
+  padding-left: 11px;
+}
+
 #loading{
   height: 200px;
   width: 250px;
@@ -99,7 +109,7 @@ a.about:active {
   width: 39%;
 }
 
-#text{
+#speciestext{
   float: right;
   padding-left: 2px;
   padding-right: 2px;
@@ -234,9 +244,19 @@ a.about:active {
   
 }
 
-#hectad_man{
-  width: 200px;
+#location_man{
+  /*float:left;*/
+  /*margin-left: 15px;*/
+  max-width: 400px;
   margin-left: 10px;
+  /*margin-right: 10px;*/
+}
+
+#submit{
+  /*float:left;*/
+  margin-left: 14px;
+  background-color:#32CD32;
+  /*width:60px;*/
 }
 
 #month_man_div{
