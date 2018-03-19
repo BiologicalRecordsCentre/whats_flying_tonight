@@ -199,7 +199,7 @@ shinyServer(function(input, output, session) {
       if(input$sortBy == 'records'){
         return(speciesData_raw())
       } else if(input$sortBy == 'english'){
-        return(speciesData_raw()[order(speciesData_raw()$new_englishname), ])
+        return(speciesData_raw()[order(gsub('^the[[:space:]]', '', tolower(speciesData_raw()$new_englishname))),])
       } else if(input$sortBy == 'latin'){
         return(speciesData_raw()[order(speciesData_raw()$new_binomial), ])
       }
