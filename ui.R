@@ -14,11 +14,11 @@ shinyUI(fluidPage(
   
   tags$head(
     
-    HTML('<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    HTML(paste0('<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
           <meta name="mobile-web-app-capable" content="yes">
           <meta name="apple-mobile-web-app-capable" content="yes">
-          <meta name="apple-mobile-web-app-title" content="Whats flying tonight">
-          <meta name="application-name" content="Whats flying tonight">
+          <meta name="apple-mobile-web-app-title" content="What',"'",'s flying tonight">
+          <meta name="application-name" content="What',"'",'s flying tonight">
           <link rel="icon" href="favicon.ico" type="image/x-icon" >
           <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png" >
           <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" >
@@ -27,7 +27,7 @@ shinyUI(fluidPage(
           <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png" >
           <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png" >
           <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png" >
-          <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png" >'),
+          <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png" >')),
     # Include our custom CSS
     includeCSS("styles.css"),
     includeCSS("lightbox.css"),
