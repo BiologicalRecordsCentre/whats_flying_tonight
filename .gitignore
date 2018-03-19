@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 *.Rproj
+demos/
+rsconnect/
+Misc/
+www/images
+www/phenology
+data/
