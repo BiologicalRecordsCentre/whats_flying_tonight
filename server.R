@@ -208,7 +208,7 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  # how many species to 
+  # how many species to show
   n_to_show <- reactive({
     
     if(input$NtoShow == 'All'){

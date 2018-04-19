@@ -2,7 +2,9 @@ $(document).ready(function () {
   navigator.geolocation.getCurrentPosition(onSuccess, onError);
 
   function onError (err) {
-  Shiny.onInputChange("geolocation", false);
+    setTimeout(function () {
+      Shiny.onInputChange("geolocation", false);
+    }, 1100)
   }
 
  function onSuccess (position) {
