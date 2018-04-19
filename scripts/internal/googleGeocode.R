@@ -1,6 +1,5 @@
 geoCode <- function(address,verbose=FALSE) {
   if(verbose) cat(address,"\n")
-  Sys.sleep(1)
   u <- url(address)
   doc <- getURL(u)
   x <- fromJSON(doc,simplify = FALSE)
@@ -10,6 +9,7 @@ geoCode <- function(address,verbose=FALSE) {
         doc <- getURL(u)
     x <- fromJSON(doc,simplify = FALSE)
     count <- count + 1
+    Sys.sleep(0.5)
   }
   
   if(x$status=="OK") {
