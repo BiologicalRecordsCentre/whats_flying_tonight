@@ -96,9 +96,17 @@ shinyServer(function(input, output, session) {
 
   # Select hectad to use
   hectad <- reactive({
-    if(!is.null(input$lat) & input$submit == 0){
+    if(input$skip_load > 0 & input$submit == 0){
+      return('skip')
+    } else if(!is.null(input$lat) & input$submit == 0){
       hectad_loc()
     } else if(location_man() != ''){
+      
+      GCode_progress <- shiny::Progress$new()
+      # Make sure it closes when we exit this reactive, even if there's an error
+      on.exit(GCode_progress$close())
+      
+      GCode_progress$set(message = "Resolving location", value = 0.2)
       
       GCode <- GCode()
       
@@ -128,6 +136,8 @@ shinyServer(function(input, output, session) {
         return(reformat_gr(gr$GRIDREF, prec_out = 10000))
       }
       
+      GCode_progress$set(message = "Resolving location", value = 1)
+      
       # input$hectad_man
     } else {
       return(NULL)
@@ -138,9 +148,12 @@ shinyServer(function(input, output, session) {
   # and the loading text is hidden
   observe({
     if(!is.null(input$geolocation) & is.null(input$lat)){
-      if(!input$geolocation){
+      cat(paste('Geo:', input$geolocation))
+      if(!input$geolocation & input$submit == 0){
         shinyjs::hide('loading', anim = FALSE)
         shinyjs::show(id = 'geolocation_denied', anim = TRUE, animType = 'fade')
+      } else if(!input$geolocation & location_man() != ''){
+        shinyjs::hide(id = 'geolocation_denied', anim = TRUE, animType = 'fade')
       }
     } 
   })
@@ -153,8 +166,6 @@ shinyServer(function(input, output, session) {
             input$month_man,
             sep = '-')
     }
-    
-    
   })
   
   jDay <- reactive({
@@ -163,12 +174,15 @@ shinyServer(function(input, output, session) {
   
   # Gather the data
   speciesData_raw <- reactive({
-    if(!is.null(input$lat) & !is.null(hectad())){
+    if(input$skip_load > 0 & input$submit == 0){
+      cat(paste('\nHectad:', 'skip', '\n'))
+      return('skip')
+    } else if(!is.null(hectad())){
       
       cat(paste('\nHectad:', hectad(), '\n'))
       
       if(identical(hectad(), 'notuk')) return(hectad())
-      
+
       recData <- gatherData(hectad = hectad(),
                             jDay = jDay(),
                             radius = 1,
@@ -182,7 +196,9 @@ shinyServer(function(input, output, session) {
         speciesData <- merge(x = recData, y = speciesDataRaw,
                              by.x = 'species', by.y = 'new_concept',
                              all.x = TRUE, all.y = FALSE, sort = FALSE)
+        return(speciesData)
       }
+      
     }
   }) 
   
@@ -190,6 +206,7 @@ shinyServer(function(input, output, session) {
   speciesData <- reactive({
     
     if(any(identical(speciesData_raw(), 'notuk'),
+           identical(speciesData_raw(), 'skip'),
            identical(speciesData_raw(), NA),
            is.null(speciesData_raw()))){
       return(speciesData_raw())
@@ -228,7 +245,7 @@ shinyServer(function(input, output, session) {
   # Build species divs
   divList <- reactive({
     
-    if(!is.null(input$lat)){
+    if(!is.null(hectad())){
       
       html <- list()
       
@@ -247,8 +264,22 @@ shinyServer(function(input, output, session) {
         
         html <- list(temp_html)
         
+      } else if(identical(speciesData, 'skip')){
+        temp_html <- tags$div(id = 'nodata',
+                              align = 'center',
+                              tags$span('Please choose a location in the settings menu')
+        )
+        
+        html <- list(temp_html)
+        
       } else {
       
+        Report_progress <- shiny::Progress$new()
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(Report_progress$close())
+        
+        Report_progress$set(message = "Building report", value = 0.1)        
+        
         # If data are present build the species panels
         if(!is.null(speciesData)){
           
@@ -417,6 +448,9 @@ shinyServer(function(input, output, session) {
               html <- append(html, list(show_n_html))
               
             }
+            
+            Report_progress$inc(0.9/n_to_show())        
+            
           } # end of species loop
         } else { # No data available
           
@@ -439,7 +473,7 @@ shinyServer(function(input, output, session) {
       }
 
       tagList(html)
-    }
+    } 
   })
 
   # output species divs

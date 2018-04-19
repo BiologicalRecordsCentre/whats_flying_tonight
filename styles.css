@@ -264,6 +264,16 @@ a.about:active {
   /*width:60px;*/
 }
 
+#skip_load{
+  /*float:left;*/
+  width: 70px;
+  margin-top: 20px;
+  background-color: #000000;
+  color: white;
+  text-align: center;
+  /*width:60px;*/
+}
+
 #month_man_div{
   float:left;
   margin-left: 15px;

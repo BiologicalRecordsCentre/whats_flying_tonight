@@ -46,7 +46,9 @@ shinyUI(fluidPage(
       h1('BETA'),
       h3('Loading...'),
       p("Using your location and today's date to build your custom report"),
-      img(src = 'images/startup.gif', alt = 'loading', style = 'margin-top: 20px; background: #ffffff85;')),
+      img(src = 'images/startup.gif', alt = 'loading', style = 'margin-top: 20px; background: #ffffff85;'),
+      br(),
+      actionButton("skip_load", "Skip")),
   # No gelocation text
   hidden(h5(id = 'geolocation_denied',
             align = 'center',

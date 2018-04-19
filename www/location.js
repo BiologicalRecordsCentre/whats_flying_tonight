@@ -3,8 +3,8 @@ $(document).ready(function () {
 
   function onError (err) {
     setTimeout(function () {
-      Shiny.onInputChange("geolocation", false);
-    }, 1100)
+        Shiny.onInputChange("geolocation", false);
+    }, 1100);
   }
 
  function onSuccess (position) {
@@ -14,6 +14,6 @@ $(document).ready(function () {
         Shiny.onInputChange("geolocation", true);
         Shiny.onInputChange("lat", coords.latitude);
         Shiny.onInputChange("long", coords.longitude);
-    }, 1100)
+    }, 1100);
 }
 });
