@@ -81,7 +81,7 @@ shinyServer(function(input, output, session) {
     textLocation <- location_man()
     cat('\n', textLocation, '\n')
     str(textLocation)
-    GCode <- geoCode(as.character(textLocation))
+    GCode <- geoCode(paste0(as.character(textLocation), ', UK'))
     return(GCode)
   })
   
@@ -139,8 +139,8 @@ shinyServer(function(input, output, session) {
   observe({
     if(!is.null(input$geolocation) & is.null(input$lat)){
       if(!input$geolocation){
-        hide('loading', anim = FALSE)
-        show('geolocation_denied', anim = TRUE, animType = 'fade')
+        shinyjs::hide('loading', anim = FALSE)
+        shinyjs::show(id = 'geolocation_denied', anim = TRUE, animType = 'fade')
       }
     } 
   })
@@ -208,7 +208,7 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  # how many species to show
+  # how many species to 
   n_to_show <- reactive({
     
     if(input$NtoShow == 'All'){
