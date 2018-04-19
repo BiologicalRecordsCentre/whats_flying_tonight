@@ -5,7 +5,7 @@ geoCode <- function(address,verbose=FALSE) {
   x <- fromJSON(doc,simplify = FALSE)
   count <- 1
   
-  while(x$status != "OK" & count < 5){
+  while(x$status != "OK" & count < 10){
         doc <- getURL(u)
     x <- fromJSON(doc,simplify = FALSE)
     count <- count + 1
