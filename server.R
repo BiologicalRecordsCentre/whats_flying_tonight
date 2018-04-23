@@ -25,6 +25,11 @@ GBR <- readRDS('data/country_polygons/GBR.rds')
 image_information <- read.csv(file = 'data/UKMoths/images/Images_requested_with_filenames.csv',
                               header = TRUE,
                               stringsAsFactors = FALSE)
+additional_image_info <- read.csv(file = 'data/Additional images.csv',
+                                  header = TRUE,
+                                  stringsAsFactors = FALSE)
+image_information <- rbind(image_information, additional_image_info)
+
 # # Create this species URL object from the raw species images file
 # # save and load
 # sp_URLs <- tapply(image_information$UKMOTHSURL, image_information$BINOMIAL,

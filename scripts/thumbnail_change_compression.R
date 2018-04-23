@@ -3,7 +3,7 @@ library(jpeg)
 library(imager)
 
 # thumbnail height dimension
-minD <- 180
+minD <- 150
 
 thumbnails <- list.files(full.names = TRUE, path = 'www/images/species', recursive = TRUE, pattern = '^thumbnail')
 
