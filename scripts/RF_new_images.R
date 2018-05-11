@@ -36,6 +36,8 @@ for (i in tdirs){
 tn
 minD <- 150
 
+# Once done you need o edit the file additiona_images.csv in the data folder
+
 for(i in tn){
   
   org_path <- i

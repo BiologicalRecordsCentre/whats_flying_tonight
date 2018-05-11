@@ -43,7 +43,6 @@ shinyUI(fluidPage(
 
   # Loading text
   div(id = 'loading',
-      h1('BETA'),
       h3('Loading...'),
       p("Using your location and today's date to build your custom report"),
       img(src = 'images/startup.gif', alt = 'loading', style = 'margin-top: 20px; background: #ffffff85;'),
