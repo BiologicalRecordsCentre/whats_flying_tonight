@@ -24,7 +24,8 @@ geoCode <- function(address,verbose=FALSE) {
 }
 
 url <- function(address, return.call = "json", sensor = "false") {
-  root <- "http://maps.google.com/maps/api/geocode/"
-  u <- paste(root, return.call, "?address=", address, "&sensor=", sensor, sep = "")
+  root <- "https://maps.google.com/maps/api/geocode/"
+  u <- paste(root, return.call, "?address=", address, "&sensor=", sensor,
+             google_key(), sep = "")
   return(URLencode(u))
 }
