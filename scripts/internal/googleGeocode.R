@@ -1,15 +1,15 @@
 geoCode <- function(address,verbose=FALSE) {
   if(verbose) cat(address,"\n")
-  Sys.sleep(1)
   u <- url(address)
   doc <- getURL(u)
   x <- fromJSON(doc,simplify = FALSE)
   count <- 1
   
-  while(x$status != "OK" & count < 5){
+  while(x$status != "OK" & count < 10){
         doc <- getURL(u)
     x <- fromJSON(doc,simplify = FALSE)
     count <- count + 1
+    Sys.sleep(0.5)
   }
   
   if(x$status=="OK") {
@@ -24,7 +24,8 @@ geoCode <- function(address,verbose=FALSE) {
 }
 
 url <- function(address, return.call = "json", sensor = "false") {
-  root <- "http://maps.google.com/maps/api/geocode/"
-  u <- paste(root, return.call, "?address=", address, "&sensor=", sensor, sep = "")
+  root <- "https://maps.google.com/maps/api/geocode/"
+  u <- paste(root, return.call, "?address=", address, "&sensor=", sensor,
+             google_key(), sep = "")
   return(URLencode(u))
 }

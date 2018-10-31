@@ -135,14 +135,19 @@ a.about:active {
 }
 
 #geolocation_denied {
-    height: 200px;
+    width: 290px;
+    background: black;
+    color: white;
+    font-size: x-large;
+    margin: 10% auto;
+    /*height: 200px;
     width: 250px;
     position: fixed;
     top: 50%;
     left: 50%;
     margin-left: -125px;
     margin-top: -100px;
-    text-align: center;
+    text-align: center;*/
 }
 
 .checkbox {
@@ -256,6 +261,16 @@ a.about:active {
   /*float:left;*/
   margin-left: 14px;
   background-color:#32CD32;
+  /*width:60px;*/
+}
+
+#skip_load{
+  /*float:left;*/
+  width: 70px;
+  margin-top: 20px;
+  background-color: #000000;
+  color: white;
+  text-align: center;
   /*width:60px;*/
 }
 
